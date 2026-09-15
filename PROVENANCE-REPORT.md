@@ -8,6 +8,14 @@
 
 De volledige lokale vergelijking levert geen exacte bestandsovereenkomst, geen gedeeld commentaarblok en geen betekenisvol near-verbatim codeblok op tussen Backup Center en Svens repository, inclusief de historische codeblobs van alle 46 commits. De overeenkomsten die de automatische analyse vindt zijn korte patronen die door Homey's API, Node.js en standaard Homey-instellingen-HTML worden verklaard.
 
+
+## Aanvulling: toestemming van Sven Serlier / smarthomesven
+
+Op 15 september 2026 leverde de projecteigenaar een schermafbeelding aan van een rechtstreeks bericht van Sven Serlier (smarthomesven). Daarin bevestigt Sven dat zijn Flow Version History-app open source is en dat de code door iedereen gebruikt mag worden. Dit is toestemming/provenance-context, geen bewijs dat Backup Center Sven-code bevat. Svens publieke repository bevat bovendien een GPLv3-LICENSE; de technische vergelijking hierboven blijft leidend voor de vraag of er daadwerkelijk GPL-afgeleid materiaal is gebruikt. De schermafbeelding zelf is niet publiek gemaakt; de tekstuele vastlegging staat in CREDITS.md.
+
+## Addendum: permission from Sven Serlier / smarthomesven
+
+On 15 September 2026, the project owner supplied a screenshot of a direct message from Sven Serlier (smarthomesven). Sven confirms that his Flow Version History app is open source and that everyone may use the code. This is permission/provenance context, not evidence that Backup Center contains Sven code. Sven's public repository also contains a GPLv3 LICENSE; the technical comparison above remains decisive for whether any GPL-derived material was actually used. The screenshot itself was not made public; the textual record is in CREDITS.md.
 Daarom is er op basis van deze bronvergelijking geen technische grond om Backup Center als een afgeleid werk van Svens GPLv3-code te behandelen of de hoofdlicentie alleen om die reden naar GPLv3 te wijzigen. Dat is een technische conclusie, geen juridisch oordeel. De huidige hoofdlicentie is daarom ongemoeid gelaten.
 
 ## Bron en reproduceerbaarheid

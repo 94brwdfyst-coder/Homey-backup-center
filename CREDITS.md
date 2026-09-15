@@ -8,6 +8,22 @@
 - **SingKT (Homey Community)** — deelde praktijktests rond flowrestore, parsing en broken flows in de oorspronkelijke communitydiscussie.
 - Ontwikkeling is ondersteund met **OpenAI ChatGPT/Codex** voor code-analyse, implementatie en documentatie.
 
+## Sven Serlier / smarthomesven
+
+- **Sven Serlier / smarthomesven** — eigenaar van de publieke [Flow Version History-repository](https://github.com/smarthomesven/homey-flow-version-history). Op 15 september 2026 gaf hij schriftelijk toestemming om zijn open-source app/code te gebruiken. Deze toestemming is provenance-context; de bronvergelijking vond geen exacte of near-verbatim Sven-code in Backup Center en deze vermelding claimt dus geen auteurschap van zijn werk.
+
+### Toestemming van Sven Serlier / smarthomesven
+
+Op 15 september 2026 bevestigde Sven Serlier in een rechtstreeks bericht dat zijn Flow Version History-app open source is en dat de code door iedereen gebruikt mag worden. De projecteigenaar leverde deze bevestiging als schermafbeelding aan; de tekstuele vastlegging wordt als provenance-context bewaard. De publieke repository bevat daarnaast Svens eigen GPLv3 LICENSE; toestemming en licentie worden samen gelezen. Als later alsnog Sven-code wordt vastgesteld, blijven GPLv3-verplichtingen en correcte notices leidend.
+
+## Sven Serlier / smarthomesven (English)
+
+- **Sven Serlier / smarthomesven** — owner of the public [Flow Version History repository](https://github.com/smarthomesven/homey-flow-version-history). On 15 September 2026 he gave written permission to use his open-source app/code. This is provenance context; the source comparison found no exact or near-verbatim Sven code in Backup Center, so this entry does not claim authorship of his work.
+
+### Permission from Sven Serlier / smarthomesven
+
+On 15 September 2026, Sven Serlier confirmed in a direct message that his Flow Version History app is open source and that everyone may use the code. The project owner supplied the confirmation as a screenshot; this textual record is retained as provenance context. The public repository also contains Sven's own GPLv3 LICENSE; permission and license are read together. If Sven code is later identified, the GPLv3 obligations and required notices remain controlling.
+
 ## Mogelijk vergeten codebijdragers
 
 Als iemand code heeft bijgedragen die in Homey Backupcentrum is gebruikt en hier onbedoeld niet wordt genoemd, meld dat dan bij het project met de relevante commit, bestanden of andere herleidbare informatie. Na verificatie voegen we correcte naam, copyright- en licentie-informatie en passende credits toe. We claimen andermans werk niet als eigen werk.

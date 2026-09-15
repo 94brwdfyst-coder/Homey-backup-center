@@ -1,0 +1,15 @@
+{
+  "name": "nl.dennisweel.flowbackup",
+  "version": "0.3.27",
+  "private": true,
+  "main": "app.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "homey-api": "3.19.2"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}

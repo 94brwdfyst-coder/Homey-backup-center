@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Homey Backupcentrum</title>
+<script src="/homey.js" data-origin="settings"></script>
+<script src="i18n.js"></script>
+<script src="backup.js"></script>
+<script src="transfer.js"></script>
+<script src="download.js"></script>
+<style>
+*{box-sizing:border-box}body{font:16px/1.5 system-ui,-apple-system,sans-serif;margin:0;background:#f5f7f5;color:#18332a}main{max-width:860px;padding:20px;margin:auto}h1{font-size:30px;margin:6px 0}h2{font-size:20px;margin-top:0}p{color:#455c52}.card{background:#fff;padding:20px;margin:18px 0;border:1px solid #dce4df;border-radius:14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}.stat{padding:10px;background:#f3f7f5;border-radius:10px;text-align:center}.stat b{display:block;font-size:20px}button,.button{font:inherit;background:#236b55;color:white;border:0;border-radius:9px;padding:12px 16px;cursor:pointer}button.secondary{background:#e7efeb;color:#18332a}button.danger{background:#8c2f2f}button:disabled{opacity:.5;cursor:wait}input,select{font:inherit;width:100%;padding:10px;border:1px solid #b9ccc1;border-radius:8px}.field{margin:10px 0}.field label{display:block;font-weight:600;margin-bottom:4px}.target{border-top:1px solid #e5ebe7;padding:14px 0}.target-actions{display:flex;gap:8px;flex-wrap:wrap}.flow{padding:13px 0;border-top:1px solid #e5ebe7;display:flex;gap:12px;align-items:center;justify-content:space-between}.flow small{display:block;color:#65776e}.flow button{font-size:14px;flex-shrink:0}#search{margin:10px 0}#status,#webdavStatus,#scheduleStatus{white-space:pre-wrap}.badge{font-size:13px;color:#52685d}.hint{font-size:14px;color:#65776e}.ok{color:#17663a}.error{color:#9b2929}.restore-result{margin:14px 0;padding:14px;border-radius:10px;background:#f3f7f5;font-weight:650}.restore-result:empty{display:none}.restore-result.ok{background:#eef8f1}.restore-result.error{background:#fff1f1}.restore-selection{margin-top:12px}.restore-selection label{display:flex!important;gap:8px;align-items:flex-start;padding:9px 0;border-top:1px solid #e5ebe7}.restore-selection input{width:auto;margin-top:5px;flex:0 0 auto}.restore-selection p{margin:14px 0 5px}.restore-details{margin-top:14px;border-top:1px solid #e5ebe7;padding-top:10px}.restore-details summary{cursor:pointer;font-weight:600;color:#52685d}.restore-details pre{max-height:420px;overflow:auto}.restore-counts{white-space:pre-wrap;margin:8px 0;color:#52685d}@media(max-width:600px){main{padding:13px}.grid,.stats{grid-template-columns:1fr}.flow{align-items:flex-start;flex-direction:column}}
+#schedWeekdays input{width:auto}#schedWeekdays label{min-height:44px}#downloadLinks a{display:inline-block;padding:12px 0}.file-input{position:absolute;width:1px;height:1px;opacity:0;padding:0}.file-button{display:inline-block;cursor:pointer}.file-button:has(+input:focus-visible){outline:3px solid #18332a;outline-offset:3px}.file-button:has(+input:disabled){opacity:.5;cursor:wait}</style></head><body><main>
+<span class="badge">PERSOONLIJKE APP · VERSIE <span id="appVersion">…</span></span><h1>Homey Backupcentrum</h1>
+<div class="field"><label for="language">Language</label><select id="language"><option value="nl">Nederlands</option><option value="en">English</option></select><p id="languageStatus" class="hint">Changing language reloads this page. Save any edited settings first.</p></div>
+<p>Maak één back-up van je flows en Homey-inventaris. Bewaar hem op iPhone/iPad, computer of één of meer WebDAV-locaties.</p>
+
+<section class="card"><h2>1. Back-up ophalen</h2>
+<p>This backup includes Flows, folders, devices, supported device settings, zones, Logic variables and an app inventory. The Homey API Key, WebDAV passwords and the Logic variable ha_backup_token are excluded. Other device settings and Flow arguments may contain sensitive information.</p>
+<div class="target-actions"><button id="fetch">Back-up ophalen</button><button id="share" class="secondary" disabled>Share or save</button><button id="save" class="secondary" disabled>Download bestand</button></div>
+<div id="stats" class="stats" hidden></div><p id="status" role="status">Nog geen back-up opgehaald.</p>
+<p class="hint">Download file uses a save dialog or the share sheet where supported. Otherwise a file link stays available. Browser restrictions may require opening Homey Web in a regular browser or saving to WebDAV.</p>
+<div id="downloadLinks" class="hint" hidden></div>
+</section>
+
+<section class="card"><h2>2. WebDAV-locaties</h2>
+<p>Je kunt meerdere doelen opslaan, bijvoorbeeld NAS, Nextcloud of een andere WebDAV-server. De doelmap moet al bestaan. WebDAV-wachtwoorden blijven in de appinstellingen op Homey en komen niet in de back-up terecht.</p>
+<div id="targets"></div>
+<button id="addTarget" class="secondary">+ WebDAV-locatie</button> <button id="saveTargets">Instellingen bewaren</button>
+<p id="webdavStatus" role="status"></p>
+</section>
+
+<section class="card"><h2>3. Back-up openen</h2>
+<p>Open hier de back-up die je wilt controleren of herstellen. De losse flowzoeker staat verder naar beneden.</p>
+<label class="button file-button" for="file">Choose backup file</label><input id="file" type="file" accept=".json,.txt" class="file-input"><p id="source"></p>
+</section>
+
+<section class="card"><h2>4. Schrijfrechten voor restore</h2>
+<p>For restore writes, save a Homey API Key. Earlier versions called this a Personal Access Token (PAT). Existing saved keys are kept.</p>
+<div class="field"><label for="restorePat">Homey API Key</label><input id="restorePat" type="password" autocomplete="new-password" placeholder="Leeg laten om bestaande token te behouden"></div>
+<div class="target-actions"><button id="saveRestorePat">Homey API Key bewaren</button><button id="testRestorePat" class="secondary">Verbinding testen</button><button id="clearRestorePat" class="danger">Homey API Key wissen</button></div>
+<p id="restoreAuthStatus" class="hint" role="status">Status wordt geladen…</p>
+<details><summary>Where do I create a Homey API Key?</summary>
+<p>Open Homey Web, select your Homey and go to Settings → API Keys → New API Key. Name it Backup Center and grant the permissions below. Copy the key when it is shown and paste it here; Homey only shows it once.</p>
+<p>Required permissions for full selective restore: Logic, Devices, Zones, Flows and Apps (write access). Technical scopes: <code>homey.logic</code>, <code>homey.device</code>, <code>homey.zone</code>, <code>homey.flow</code>, <code>homey.app</code>.</p>
+<p>The connection test checks authentication. It does not prove that every write permission is present.</p>
+<a href="https://support.homey.app/hc/en-us/articles/8178797067292-Create-and-use-API-Keys-on-Homey-Pro" target="_blank" rel="noopener">Official Homey instructions</a></details>
+</section>
+
+<section class="card"><h2>5. Automatische back-up</h2>
+<p>On selected weekdays, the app starts around the chosen time (Europe/Amsterdam, checked every minute). A failed backup gets up to two retries, at least 15 minutes apart, including after midnight. Manual backups have their own status. Only after all three attempts fail does the app send a push and create a Timeline notification.</p>
+<div class="field"><label><input id="schedEnabled" type="checkbox" style="width:auto"> Automatische back-up inschakelen</label></div>
+<div class="grid">
+<div class="field"><label for="schedTime">Tijd</label><input id="schedTime" type="time" value="03:00"></div>
+<div class="field"><label for="schedTarget">WebDAV-locatie</label><select id="schedTarget"></select></div>
+</div>
+<div class="field"><label for="schedNotifyUser">Push recipient</label><select id="schedNotifyUser"></select><p id="notificationHelp" class="hint">The default recipient is this Homey's owner. Push requires a working Homey API Key with Flow write access; recipient lookup uses the app's Homey access. A critical push is used if available, otherwise a normal push. Phone notification settings still apply. Delivery errors appear below.</p></div>
+<fieldset id="schedWeekdays"><legend>Dagen</legend></fieldset>
+<div class="target-actions"><button id="saveSchedule">Schema bewaren</button><button id="runScheduleNow" class="secondary">Nu een back-up maken</button></div>
+<p id="scheduleStatus" class="hint" role="status">Schema laden…</p>
+</section>
+
+<section class="card"><h2>6. Selective restore</h2>
+<p>Versie <span id="restoreVersion">…</span> kan een herstelplan opvragen voor apps, zones, Logic, apparatenkoppelingen en flows. De app voert nooit automatisch een restore uit: controleer eerst het plan en bevestig daarna expliciet.</p>
+<div class="target-actions"><button id="planRestore" class="secondary" disabled>Herstelplan controleren</button><button id="runRestore" class="danger" disabled>Restore uitvoeren</button></div>
+<p id="restoreStatus" role="status">Open eerst een back-upbestand.</p>
+<div id="restoreResult" class="restore-result" role="status"></div>
+<div id="restoreCounts" class="restore-counts hint"></div>
+<div id="logicSelection" class="restore-selection"></div>
+<details id="restoreDetails" class="restore-details"><summary>Technische details tonen</summary><pre id="restorePlan" class="hint" style="white-space:pre-wrap"></pre></details>
+<p class="hint"><b>Veiligheidsgrens:</b> radio-pairings en een volledige Homey-systeemimage kunnen niet betrouwbaar via deze configuratierestore worden gereconstrueerd. Gebruik daarvoor Homey's officiële systeem/cloud/USB-herstel waar van toepassing.</p>
+</section>
+
+
+<section class="card"><h2>7. Individuele flows terugvinden</h2>
+<p>Zoek in de geopende back-up naar losse Standard- of Advanced Flows om die apart te exporteren.</p>
+<label for="search">Zoek op flownaam of map</label><input id="search" type="search" placeholder="Bijvoorbeeld: vaatwasser"><div id="list"></div>
+</section>
+
+<section class="card"><h2>Wat apart blijft</h2>
+<p>Individuele flows blijven exporteerbaar als <code>.homeystdflow</code> of <code>.homeyadvflow</code>. Zelfgebouwde Developer App-broncode kan Homey niet uit de oorspronkelijke projectmap terughalen; bewaar die projectmappen apart.</p>
+</section>
+
+<section class="card"><h2>Credits</h2><p>De oorspronkelijke Homey-flowback-up- en splitscripts zijn gemaakt en gedeeld door Mike_Nono (Homey Community). Deze app bouwt daarop voort.</p></section>
+</main><script src="ui.js"></script></body></html>

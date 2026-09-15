@@ -1,0 +1,208 @@
+{
+  "id": "nl.dennisweel.flowbackup",
+  "version": "0.3.27",
+  "compatibility": ">=12.0.0",
+  "sdk": 3,
+  "runtime": "nodejs",
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Homey Backup Center",
+    "nl": "Homey Backupcentrum"
+  },
+  "description": {
+    "en": "Back up and restore Homey configuration locally or via WebDAV",
+    "nl": "Back-up en herstel Homey-configuratie lokaal of via WebDAV"
+  },
+  "category": [
+    "tools"
+  ],
+  "brandColor": "#236B55",
+  "author": {
+    "name": "Dennis Weel"
+  },
+  "permissions": [
+    "homey:manager:api"
+  ],
+  "api": {
+    "getAppInfo": {
+      "method": "GET",
+      "path": "/app-info"
+    },
+    "exportBackup": {
+      "method": "GET",
+      "path": "/export"
+    },
+    "getWebdav": {
+      "method": "GET",
+      "path": "/webdav"
+    },
+    "saveWebdav": {
+      "method": "POST",
+      "path": "/webdav",
+      "body": {
+        "config": "string"
+      }
+    },
+    "testWebdav": {
+      "method": "POST",
+      "path": "/webdav/test",
+      "body": {
+        "targetId": "string"
+      }
+    },
+    "uploadWebdav": {
+      "method": "POST",
+      "path": "/webdav/upload",
+      "body": {
+        "targetId": "string"
+      }
+    },
+    "getSchedule": {
+      "method": "GET",
+      "path": "/schedule"
+    },
+    "saveSchedule": {
+      "method": "POST",
+      "path": "/schedule",
+      "body": {
+        "config": "object"
+      }
+    },
+    "runScheduleNow": {
+      "method": "POST",
+      "path": "/schedule/run",
+      "body": {
+        "targetId": "string"
+      }
+    },
+    "restorePlan": {
+      "method": "POST",
+      "path": "/restore/plan",
+      "body": {
+        "backup": "object"
+      }
+    },
+    "restoreRun": {
+      "method": "POST",
+      "path": "/restore/run",
+      "body": {
+        "backup": "object",
+        "confirm": "boolean",
+        "selection": "object"
+      }
+    },
+    "getRestoreAuth": {
+      "method": "GET",
+      "path": "/restore/auth"
+    },
+    "saveRestoreAuth": {
+      "method": "POST",
+      "path": "/restore/auth",
+      "body": {
+        "token": "string"
+      }
+    },
+    "testRestoreAuth": {
+      "method": "POST",
+      "path": "/restore/auth/test"
+    },
+    "saveLanguage": {
+      "method": "POST",
+      "path": "/language",
+      "body": {
+        "language": "string"
+      }
+    },
+    "notificationUsers": {
+      "method": "GET",
+      "path": "/notification-users"
+    },
+    "startTransfer": {
+      "method": "POST",
+      "path": "/transfer/start",
+      "body": {
+        "bytes": "number",
+        "kind": "string"
+      }
+    },
+    "appendTransfer": {
+      "method": "POST",
+      "path": "/transfer/append",
+      "body": {
+        "id": "string",
+        "offset": "number",
+        "data": "string"
+      }
+    },
+    "finishTransfer": {
+      "method": "POST",
+      "path": "/transfer/finish",
+      "body": {
+        "id": "string"
+      }
+    },
+    "readTransfer": {
+      "method": "POST",
+      "path": "/transfer/read",
+      "body": {
+        "id": "string",
+        "offset": "number"
+      }
+    },
+    "releaseTransfer": {
+      "method": "POST",
+      "path": "/transfer/release",
+      "body": {
+        "id": "string"
+      }
+    },
+    "prepareExport": {
+      "method": "POST",
+      "path": "/export/prepare"
+    },
+    "stagedRestorePlan": {
+      "method": "POST",
+      "path": "/restore/staged-plan",
+      "body": {
+        "id": "string"
+      }
+    },
+    "stagedRestoreRun": {
+      "method": "POST",
+      "path": "/restore/staged-run",
+      "body": {
+        "id": "string",
+        "confirm": "boolean",
+        "selectionId": "string"
+      }
+    },
+    "getJob": {
+      "method": "POST",
+      "path": "/job",
+      "body": {
+        "id": "string"
+      }
+    },
+    "releaseJob": {
+      "method": "POST",
+      "path": "/job/release",
+      "body": {
+        "id": "string"
+      }
+    }
+  },
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Mike_Nono"
+      }
+    ]
+  }
+}

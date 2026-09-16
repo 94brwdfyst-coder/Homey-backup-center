@@ -20,7 +20,7 @@ const BackupDownload = (()=>{
         try {canShare=Boolean(navigator.canShare?.({files:[file]}));} catch (_) { /* Permissions policy may deny sharing in an iframe. */ }
       }
       if(canShare) {
-        await navigator.share({files:[file],title:t('Homey Backup Center')});
+        await navigator.share({files:[file],title:t('Backup Center')});
         status.textContent=t('File handed to the share sheet. Check the destination you selected.');return;
       }
       if(!shareOnly && typeof window.showSaveFilePicker==='function'){

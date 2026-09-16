@@ -1,4 +1,4 @@
-# Homey Backup Center / Homey Backupcentrum 0.4.0
+# Backup Center 0.4.1
 
 ## Nederlands
 
@@ -54,7 +54,7 @@ Selecteer vooraf de juiste Homey via `homey select` wanneer nodig. Gebruik geen 
 
 Dit is een ontwikkel-/testversie. Het pakket is lokaal getest en gevalideerd, maar 0.3.27 is nog niet op een echte Homey of Android-telefoon getest. Controleer na installatie eerst taal, behouden instellingen, nieuwe back-up en een vergelijking met dezelfde Homey. Test daarna één herkenbare geselecteerde wijziging, geplande back-ups en telefoonmeldingen. Zie `TESTING.md` voor de uitgevoerde tests en resterende praktijkcontroles.
 
-Geen volledige Homey-systeemimage; radio-pairings worden niet opnieuw opgebouwd. Bewaar broncode van eigen Developer Apps apart. Zie `CREDITS.md` voor herkomst en eerdere Beta 1-tests. De historische basis is Flow Back-up Hulp 0.1.1.
+Geen volledige Homey-systeemimage; radio-pairings worden niet opnieuw opgebouwd. Bewaar broncode van eigen Developer Apps apart. Zie `CREDITS.md` voor herkomst en eerdere Beta 1-tests. De historische basis is een eerdere back-uptoolsversie.
 
 ---
 

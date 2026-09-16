@@ -32,7 +32,7 @@ Testers, bugmelders en mensen die feedback of voorbeelden deelden worden afzonde
 
 ## Potentially omitted code contributors
 
-If you contributed code that is used in Homey Backup Center and you are unintentionally missing from this file, please contact the project with the relevant commit, files, or other traceable information. After verification, we will add accurate name, copyright and license information, and appropriate credits. We do not claim another person's work as our own.
+If you contributed code that is used in Backup Center and you are unintentionally missing from this file, please contact the project with the relevant commit, files, or other traceable information. After verification, we will add accurate name, copyright and license information, and appropriate credits. We do not claim another person's work as our own.
 
 Testers, bug reporters, and people who shared feedback or examples are listed separately as testing or feedback contributors. That does not by itself mean they authored code.
 

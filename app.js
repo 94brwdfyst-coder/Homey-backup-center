@@ -189,7 +189,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
     const tick=()=>this.scheduler.tick().catch(e=>this.error('Scheduler:',e.message));
     this.scheduleTimer=this.homey.setInterval(()=>{this.transfers.prune();this.jobs.prune();tick();},60*1000);
     tick();
-    this.log('Homey Backup Center '+this.homey.app.manifest.version);
+    this.log('Backup Center '+this.homey.app.manifest.version);
   }
   onUninit() {
     if(this.scheduleTimer)this.homey.clearInterval(this.scheduleTimer);
@@ -776,7 +776,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
   async uploadWebdav(targetId) {
     const t = this.getTarget(targetId);
     const data = await this.exportBackup();
-    const filename = 'Homey_Backup_Center_' + data.createdAt.replace(/[:.]/g, '-') + '.json';
+    const filename = 'Backup_Center_' + data.createdAt.replace(/[:.]/g, '-') + '.json';
     const base = t.url.endsWith('/') ? t.url : t.url + '/';
     const destination = new URL(encodeURIComponent(filename), base).toString();
     const body = Buffer.from(JSON.stringify(data, null, 2), 'utf8');

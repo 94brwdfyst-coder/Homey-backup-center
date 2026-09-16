@@ -1,6 +1,6 @@
 {
   "id": "nl.dennisweel.flowbackup",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "compatibility": ">=12.0.0",
   "sdk": 3,
   "runtime": "nodejs",
@@ -8,12 +8,12 @@
     "local"
   ],
   "name": {
-    "en": "Homey Backup Center",
-    "nl": "Homey Backupcentrum"
+    "en": "Backup Center",
+    "nl": "Backup Center"
   },
   "description": {
-    "en": "Back up Homey configuration locally or to WebDAV, SMB and SFTP",
-    "nl": "Bewaar Homey-configuratie lokaal of via WebDAV, SMB en SFTP"
+    "en": "Keep your setup safe with simple, reliable backups.",
+    "nl": "Houd je instellingen veilig met eenvoudige, betrouwbare back-ups."
   },
   "category": [
     "tools"

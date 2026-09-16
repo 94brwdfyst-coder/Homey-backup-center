@@ -1,3 +1,9 @@
+## 0.4.1
+- Rename the app to Backup Center and update the English and Dutch store taglines.
+- Replace the store readme with concise product information without release history.
+- Replace the store images with a setup-to-backup-to-storage visual.
+- Update visible settings and share-sheet branding; backup and restore behavior is unchanged.
+
 ## 0.4.0
 - Promote the successfully field-tested SMB2/SFTP work to the 0.4 release line.
 - SMB2 uses NTLMv2 authentication; real connection/write test and real JSON backup validated against Samba on Ubuntu.

@@ -51,7 +51,7 @@ Manual acceptance: test on a real SMB NAS and SFTP server; verify the final JSON
 
 Completed on a real Homey Pro with an Ubuntu server at the test LAN target.
 
-- SMB2: saved destination reloaded, connection and write-rights check passed, runtime reported NTLMv2 authentication, and a real Homey Backup Center JSON backup was written successfully to a Samba share.
-- SFTP: saved destination reloaded, SHA256 host-key verification passed, connection and write-rights check passed, and a real Homey Backup Center JSON backup was written successfully through OpenSSH/SFTP.
+- SMB2: saved destination reloaded, connection and write-rights check passed, runtime reported NTLMv2 authentication, and a real Backup Center JSON backup was written successfully to a Samba share.
+- SFTP: saved destination reloaded, SHA256 host-key verification passed, connection and write-rights check passed, and a real Backup Center JSON backup was written successfully through OpenSSH/SFTP.
 - The SFTP test used SHA256. SHA1 parsing/verification remains supported for NAS compatibility but was not field-tested in this acceptance run.
 - No claim is made here that Synology, QNAP, or every SMB/SFTP server configuration has been validated.

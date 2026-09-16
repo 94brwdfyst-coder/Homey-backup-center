@@ -3,7 +3,6 @@
 let language='nl';
 const dictionaries={
   "nl": {
-    "Homey Backupcentrum": "Homey Backupcentrum",
     "PERSOONLIJKE APP · VERSIE": "PERSOONLIJKE APP · VERSIE",
     "Maak één back-up van je flows en Homey-inventaris. Bewaar hem op iPhone/iPad, computer of één of meer WebDAV-locaties.": "Maak één back-up van je flows en Homey-inventaris. Bewaar hem op iPhone/iPad, computer of één of meer WebDAV-locaties.",
     "1. Back-up ophalen": "1. Back-up ophalen",
@@ -268,7 +267,7 @@ const dictionaries={
     "Download requested. Check your browser downloads. If nothing happens, use the file link or save the backup to WebDAV.": "Download aangevraagd. Controleer de downloads van je browser. Gebeurt er niets, gebruik dan de bestandslink of bewaar de back-up op WebDAV.",
     "File handed to the share sheet. Check the destination you selected.": "Bestand aan de deelkaart doorgegeven. Controleer de gekozen bestemming.",
     "File saved.": "Bestand bewaard.",
-    "Homey Backup Center": "Homey Backupcentrum",
+    "Backup Center": "Backup Center",
     "Homey owner (automatic)": "Homey-eigenaar (automatisch)",
     "Invalid backup chunk size.": "Ongeldige grootte van het back-updeel.",
     "Invalid backup chunk.": "Ongeldig back-updeel.",
@@ -543,7 +542,6 @@ const dictionaries={
     "The opened file is ready for comparison.": "Het geopende bestand is klaar voor vergelijking."
   },
   "en": {
-    "Homey Backupcentrum": "Homey Backup Center",
     "PERSOONLIJKE APP · VERSIE": "PERSONAL APP · VERSION",
     "Maak één back-up van je flows en Homey-inventaris. Bewaar hem op iPhone/iPad, computer of één of meer WebDAV-locaties.": "Back up your Flows and Homey inventory. Save the file on your phone, tablet, computer or a WebDAV location.",
     "1. Back-up ophalen": "1. Create a backup",
@@ -808,7 +806,7 @@ const dictionaries={
     "Download requested. Check your browser downloads. If nothing happens, use the file link or save the backup to WebDAV.": "Download requested. Check your browser downloads. If nothing happens, use the file link or save the backup to WebDAV.",
     "File handed to the share sheet. Check the destination you selected.": "File handed to the share sheet. Check the destination you selected.",
     "File saved.": "File saved.",
-    "Homey Backup Center": "Homey Backup Center",
+    "Backup Center": "Backup Center",
     "Homey owner (automatic)": "Homey owner (automatic)",
     "Invalid backup chunk size.": "Invalid backup chunk size.",
     "Invalid backup chunk.": "Invalid backup chunk.",
@@ -1115,7 +1113,7 @@ function apply(doc){
  while(walker.nextNode())nodes.push(walker.currentNode);
  for(const node of nodes){if(['SCRIPT','STYLE'].includes(node.parentElement?.tagName))continue;const key=node.textContent.trim();if(key && dictionaries[language][key]!==undefined)node.textContent=node.textContent.replace(key,t(key));}
  for(const el of doc.querySelectorAll('[placeholder],[title],[aria-label]'))for(const a of ['placeholder','title','aria-label'])if(el.hasAttribute(a))el.setAttribute(a,t(el.getAttribute(a)));
- doc.title=t('Homey Backup Center');
+ doc.title=t('Backup Center');
 }
 const api={t,setLanguage,getLanguage,apply,dictionaries};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.BackupI18n=api;

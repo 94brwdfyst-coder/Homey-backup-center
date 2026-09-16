@@ -14,7 +14,7 @@ test('destination validation, secret preservation, deletion and endpoint changes
 });
 test('backup success emits only safe tokens; failed event delivery cannot undo success',async()=>{
  let call,event;const n=setup(async(...args)=>{call=args;return {ok:true};},async(...args)=>{event=args;throw Error('Flow failed');});const [t]=n.save(target);const result=await n.backup(t.id);
- assert.equal(call[0].password,'test-secret');assert.match(call[1],/^Homey_Backup_Center_.*\.json$/);assert.equal(JSON.parse(call[2]).version,4);assert.equal(result.ok,true);assert.equal(event[0],'network_backup_completed');assert(!JSON.stringify(event).includes('test-secret'));assert.equal(n.busy,false);
+ assert.equal(call[0].password,'test-secret');assert.match(call[1],/^Backup_Center_.*\.json$/);assert.equal(JSON.parse(call[2]).version,4);assert.equal(result.ok,true);assert.equal(event[0],'network_backup_completed');assert(!JSON.stringify(event).includes('test-secret'));assert.equal(n.busy,false);
 });
 test('failed upload is redacted and triggers failure only',async()=>{
  let event;const n=setup(async()=>{throw Error('server leaked test-secret');},async(...args)=>{event=args;});const [t]=n.save(target);await assert.rejects(n.backup(t.id),/Network operation failed/);assert.equal(event[0],'network_backup_failed');assert(!JSON.stringify(event).includes('test-secret'));assert.equal(n.busy,false);

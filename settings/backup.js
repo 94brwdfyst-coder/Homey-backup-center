@@ -81,7 +81,7 @@
 
   function backupFilename(date) {
     const stamp = (date || new Date()).toISOString().replace(/[:.]/g, '-');
-    return 'Homey_Backup_Center_' + stamp + '.json';
+    return 'Backup_Center_' + stamp + '.json';
   }
 
   const api = {buildFlows, parse, validate: validateFlows, filename, backupFilename};

@@ -1,3 +1,5 @@
 node_modules/
 test/
 TESTING.md
+docs/
+eslint.config.js

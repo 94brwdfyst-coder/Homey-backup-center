@@ -1,6 +1,6 @@
 {
   "id": "nl.dennisweel.flowbackup",
-  "version": "0.3.27",
+  "version": "0.3.28",
   "compatibility": ">=12.0.0",
   "sdk": 3,
   "runtime": "nodejs",
@@ -12,8 +12,8 @@
     "nl": "Homey Backupcentrum"
   },
   "description": {
-    "en": "Back up and restore Homey configuration locally or via WebDAV",
-    "nl": "Back-up en herstel Homey-configuratie lokaal of via WebDAV"
+    "en": "Back up Homey configuration locally or to WebDAV, SMB and SFTP",
+    "nl": "Bewaar Homey-configuratie lokaal of via WebDAV, SMB en SFTP"
   },
   "category": [
     "tools"
@@ -191,6 +191,38 @@
       "body": {
         "id": "string"
       }
+    },
+    "getNetwork": {
+      "method": "GET",
+      "path": "/network"
+    },
+    "saveNetwork": {
+      "method": "POST",
+      "path": "/network",
+      "body": {
+        "target": "object"
+      }
+    },
+    "removeNetwork": {
+      "method": "POST",
+      "path": "/network/remove",
+      "body": {
+        "id": "string"
+      }
+    },
+    "testNetwork": {
+      "method": "POST",
+      "path": "/network/test",
+      "body": {
+        "id": "string"
+      }
+    },
+    "backupNetwork": {
+      "method": "POST",
+      "path": "/network/backup",
+      "body": {
+        "id": "string"
+      }
     }
   },
   "images": {
@@ -202,6 +234,142 @@
     "developers": [
       {
         "name": "Mike_Nono"
+      }
+    ]
+  },
+  "flow": {
+    "actions": [
+      {
+        "id": "network_backup",
+        "title": {
+          "en": "Create backup to network destination",
+          "nl": "Maak back-up naar netwerkbestemming"
+        },
+        "args": [
+          {
+            "name": "destination",
+            "type": "autocomplete",
+            "title": {
+              "en": "Destination",
+              "nl": "Bestemming"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Create backup to network destination [[destination]]",
+          "nl": "Maak back-up naar netwerkbestemming [[destination]]"
+        }
+      }
+    ],
+    "conditions": [
+      {
+        "id": "network_destination_reachable",
+        "title": {
+          "en": "Network destination is writable",
+          "nl": "Netwerkbestemming is beschrijfbaar"
+        },
+        "args": [
+          {
+            "name": "destination",
+            "type": "autocomplete",
+            "title": {
+              "en": "Destination",
+              "nl": "Bestemming"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Network destination is writable [[destination]]",
+          "nl": "Netwerkbestemming is beschrijfbaar [[destination]]"
+        }
+      }
+    ],
+    "triggers": [
+      {
+        "id": "network_backup_completed",
+        "title": {
+          "en": "Network backup completed",
+          "nl": "Netwerkback-up geslaagd"
+        },
+        "args": [
+          {
+            "name": "destination",
+            "type": "autocomplete",
+            "title": {
+              "en": "Destination",
+              "nl": "Bestemming"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "destination",
+            "type": "string",
+            "title": {
+              "en": "Destination",
+              "nl": "Bestemming"
+            }
+          },
+          {
+            "name": "filename",
+            "type": "string",
+            "title": {
+              "en": "Filename",
+              "nl": "Bestandsnaam"
+            }
+          },
+          {
+            "name": "bytes",
+            "type": "number",
+            "title": {
+              "en": "Bytes",
+              "nl": "Bytes"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Network backup completed [[destination]]",
+          "nl": "Netwerkback-up geslaagd [[destination]]"
+        }
+      },
+      {
+        "id": "network_backup_failed",
+        "title": {
+          "en": "Network backup failed",
+          "nl": "Netwerkback-up mislukt"
+        },
+        "args": [
+          {
+            "name": "destination",
+            "type": "autocomplete",
+            "title": {
+              "en": "Destination",
+              "nl": "Bestemming"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "destination",
+            "type": "string",
+            "title": {
+              "en": "Destination",
+              "nl": "Bestemming"
+            }
+          },
+          {
+            "name": "error",
+            "type": "string",
+            "title": {
+              "en": "Error",
+              "nl": "Fout"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Network backup failed [[destination]]",
+          "nl": "Netwerkback-up mislukt [[destination]]"
+        }
       }
     ]
   }

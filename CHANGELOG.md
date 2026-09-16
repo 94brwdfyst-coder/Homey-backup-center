@@ -1,3 +1,11 @@
+## 0.3.28 (local build)
+
+- Fix explicit browser download/share selection and iframe fallback capability handling.
+- Add SMB2/SFTP destinations, mandatory SFTP host-key verification, safe error messages and bounded worker transfers.
+- Add settings forms, connection tests and Homey Flow action/completion/failure/condition cards.
+- Add runtime license notices, provenance evidence, reproducible lint/build and protocol/UI regression tests.
+- Hardware/NAS/browser acceptance testing remains required; see docs/NETWORK-BACKUPS.md.
+
 ## 0.3.27 — Beta fixes / bèta-correcties
 - Keuze Nederlands / English, opgeslagen in appinstellingen; uitleg en eigen meldingen vertaald.
 - Homey API Key-benaming met instructies en bestaande restorePat-opslag behouden.

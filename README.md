@@ -85,3 +85,11 @@ Saved API Keys, WebDAV passwords and the exact Logic variable `ha_backup_token` 
 Extract the zip, enter `hbc0327`, run `npm ci --ignore-scripts`, `homey app validate --level publish` and `homey app install`. Select the intended Homey beforehand if needed. Do not use `--clean` when retaining app settings. Publishing is a separate action.
 
 0.3.27 is a development/test build. Local tests and publish-level validation pass; actual Homey, Android and phone notification tests remain. See `TESTING.md`. This app does not replace a complete Homey system backup or recreate radio pairings. Keep custom Developer App source folders separately.
+
+## 0.3.28 — SMB/SFTP and Homey Flow
+
+SMB and SFTP destinations can now be configured and tested in app settings. Schedule network backups using Homey's date/time trigger and the **Create backup to network destination** action. Completion/failure triggers and a writable-destination condition are included.
+
+See [Network backup setup and limitations](docs/NETWORK-BACKUPS.md), [build/provenance review](docs/provenance/BUILD-REVIEW.md), and [runtime dependency notices](THIRD-PARTY-NOTICES.txt).
+
+Development: Node.js 22 or newer, `npm ci`, `npm run lint`, `npm test`, `npm run build`. Integration tests create temporary servers on localhost; no NAS credentials are needed. `npm run build` creates `.homeybuild` without installing, publishing or uploading the app.

@@ -39,3 +39,9 @@ De pure regressietests staan in `test/` en zijn via `npm test` uitvoerbaar. De t
 ## English summary
 
 All 22 local regression tests pass, plus a real Chromium end-to-end UI test with a simulated Homey and a 4.8 MB backup. Publish-level Homey validation passes. The browser successfully downloads and verifies a JSON file; OS file sharing is mocked. No actual Homey installation, restore, NAS upload or push delivery was performed. The checks above must still be completed on the user's Homey and target phones before treating 0.3.27 as field-tested.
+
+## 0.3.28 network regression checks
+
+Run `npm ci`, `npm run lint`, `npm test`, `npm run build` on Node 22+. Tests include a temporary real SFTP server, host-key mismatch, incorrect password, write denial, timeout termination, SMB adapter order/cleanup, settings form submission/polling, concurrent-run exclusion, secret redaction and Flow destination filtering. Existing restore/scheduler/transfer tests remain included. Local listening sockets must be permitted for SFTP tests.
+
+Manual acceptance: test on a real SMB NAS and SFTP server; verify the final JSON can be opened by Backup Center; exercise success/failure Flow cards and a scheduled date/time Flow on Homey; retest the reported Android and Windows Chrome/Firefox download behavior. SMB signing/encryption compatibility and browser behavior on those devices are not established by mocks or DOM tests.

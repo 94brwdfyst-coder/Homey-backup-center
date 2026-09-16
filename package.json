@@ -1,15 +1,26 @@
 {
   "name": "nl.dennisweel.flowbackup",
-  "version": "0.3.27",
+  "version": "0.3.28",
   "private": true,
   "main": "app.js",
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
-    "homey-api": "3.19.2"
+    "@awo00/smb2": "1.1.1",
+    "homey-api": "3.19.2",
+    "ssh2-sftp-client": "12.1.1"
   },
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "lint": "eslint .",
+    "build": "homey app build"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "globals": "16.5.0",
+    "homey": "4.5.0",
+    "jsdom": "26.1.0"
   }
 }

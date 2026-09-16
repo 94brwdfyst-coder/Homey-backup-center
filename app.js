@@ -1,6 +1,7 @@
 'use strict';
 const Homey = require('homey');
 const {Transfers} = require('./lib/transfers');
+const {NetworkDestinations}=require('./lib/network');
 const {Scheduler} = require('./lib/scheduler');
 const Jobs = require('./lib/jobs');
 const I18n = require('./settings/i18n');
@@ -169,6 +170,9 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
   async onInit() {
     I18n.setLanguage(this.homey.settings.get('language') || this.homey.i18n.getLanguage());
     this.transfers = new Transfers(); this.jobs = new Jobs();
+    this.network = new NetworkDestinations({settings:this.homey.settings,exportBackup:()=>this.exportBackup(),
+      emit:(id,tokens,state)=>this.homey.flow.getTriggerCard(id).trigger(tokens,state)});
+    this.registerNetworkFlows();
     this.client = await HomeyAPI.createAppAPI({homey:this.homey});
     this.writeClient=null; this.writeClientError=null;
     await this.initWriteClient();
@@ -190,6 +194,20 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
   onUninit() {
     if(this.scheduleTimer)this.homey.clearInterval(this.scheduleTimer);
     this.transfers?.clear();
+  }
+  registerNetworkFlows(){
+    const autocomplete=async query=>this.network.list().filter(t=>t.name.toLowerCase().includes(String(query).toLowerCase())).map(t=>({id:t.id,name:t.name,description:t.type.toUpperCase()}));
+    const action=this.homey.flow.getActionCard('network_backup');
+    action.registerArgumentAutocompleteListener('destination',autocomplete);
+    action.registerRunListener(async args=>{await this.network.backup(args.destination?.id);return true;});
+    const condition=this.homey.flow.getConditionCard('network_destination_reachable');
+    condition.registerArgumentAutocompleteListener('destination',autocomplete);
+    condition.registerRunListener(async args=>{try{await this.network.test(args.destination?.id);return true;}catch(_){return false;}});
+    for(const id of ['network_backup_completed','network_backup_failed']){
+      const card=this.homey.flow.getTriggerCard(id);
+      card.registerArgumentAutocompleteListener('destination',autocomplete);
+      card.registerRunListener(async(args,state)=>args.destination?.id===state.destinationId);
+    }
   }
   getAppInfo(){return {version:this.homey.app.manifest.version,language:I18n.getLanguage()};}
   saveLanguage(language){

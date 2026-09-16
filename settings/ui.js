@@ -388,6 +388,7 @@ async function onHomeyReady(HomeyInstance){
   const info=await api('GET','/app-info',null).catch(()=>({language:'nl'}));
   BackupI18n.setLanguage(info.language);BackupI18n.apply(document);$('language').value=BackupI18n.getLanguage();
   $('language').onchange=async()=>{try{await api('POST','/language',{language:$('language').value});location.reload();}catch(e){$('languageStatus').textContent=tr('Language could not be saved: ')+tr(e.message||String(e));}};
+  await NetworkUi.init();
   await loadNotificationUsers();
   setInterval(()=>{if(!operationBusy)api('GET','/schedule',null).then(showScheduleStatus).catch(()=>{});},15000);
   api('GET','/app-info',null).then(info=>{ const v=String(info?.version||'—'); if($('appVersion')) $('appVersion').textContent=v; if($('restoreVersion')) $('restoreVersion').textContent=v; }).catch(()=>{ if($('appVersion')) $('appVersion').textContent='—'; if($('restoreVersion')) $('restoreVersion').textContent='—'; });

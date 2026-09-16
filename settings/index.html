@@ -28,6 +28,27 @@
 <p id="webdavStatus" role="status"></p>
 </section>
 
+<section class="card"><h2>SMB / SFTP network backups</h2>
+<p>Configure a destination, test it, then select it in the “Create backup to network destination” Flow action. Use a Homey date/time trigger to schedule it. The destination folder must already exist.</p>
+<p>Passwords stay in Homey app settings and are excluded from this app's backup exports and Flow tokens. SMB2 is for a trusted local network; this client does not provide SMB3 encryption. SFTP requires the server's SHA256 host-key fingerprint from its administrator.</p>
+<fieldset id="network-fields"><legend>Network destination</legend>
+<label for="net-select">Saved destinations</label><select id="net-select"></select>
+<div class="grid">
+<div class="field"><label for="net-name">Name</label><input id="net-name" type="text" autocomplete="off"></div>
+<div class="field"><label for="net-type">Protocol</label><select id="net-type"><option value="sftp">SFTP</option><option value="smb">SMB2</option></select></div>
+<div class="field"><label for="net-host">Host / IP address</label><input id="net-host" type="text" autocomplete="off"></div>
+<div class="field"><label for="net-port">Port</label><input id="net-port" type="number" autocomplete="off"></div>
+<div class="field"><label for="net-share">SMB share name</label><input id="net-share" type="text" autocomplete="off"></div>
+<div class="field"><label for="net-directory">Existing folder</label><input id="net-directory" type="text" autocomplete="off"></div>
+<div class="field"><label for="net-domain">SMB domain (optional)</label><input id="net-domain" type="text" autocomplete="off"></div>
+<div class="field"><label for="net-username">Username</label><input id="net-username" type="text" autocomplete="off"></div>
+<div class="field"><label for="net-password">Password</label><input id="net-password" type="password" autocomplete="new-password"></div>
+<div class="field"><label for="net-fingerprint">SFTP SHA256 host-key fingerprint</label><input id="net-fingerprint" type="text" autocomplete="off"></div>
+<div class="field"><label for="net-timeoutMs">Timeout in milliseconds (5000–120000)</label><input id="net-timeoutMs" type="number" autocomplete="off"></div>
+</div><div class="target-actions"><button id="net-save">Save destination</button><button id="net-test" class="secondary">Test connection</button><button id="net-backup">Back up now</button><button id="net-remove" class="danger">Remove destination</button></div>
+</fieldset><p id="network-status" role="status" style="white-space:pre-wrap"></p>
+<p>Flow scheduling runs once per action. Use the completion/failure trigger cards for follow-up actions. The existing WebDAV schedule remains configured separately.</p>
+</section>
 <section class="card"><h2>3. Back-up openen</h2>
 <p>Open hier de back-up die je wilt controleren of herstellen. De losse flowzoeker staat verder naar beneden.</p>
 <label class="button file-button" for="file">Choose backup file</label><input id="file" type="file" accept=".json,.txt" class="file-input"><p id="source"></p>
@@ -80,4 +101,4 @@
 </section>
 
 <section class="card"><h2>Credits</h2><p>De oorspronkelijke Homey-flowback-up- en splitscripts zijn gemaakt en gedeeld door Mike_Nono (Homey Community). Deze app bouwt daarop voort.</p></section>
-</main><script src="ui.js"></script></body></html>
+</main><script src="ui.js"></script><script src="network.js"></script></body></html>

@@ -1083,6 +1083,28 @@ const dictionaries={
     "The opened file is ready for comparison.": "The opened file is ready for comparison."
   }
 };
+Object.assign(dictionaries.nl,{
+  "SMB / SFTP network backups": "SMB / SFTP-netwerkback-ups",
+  "Configure a destination, test it, then select it in the “Create backup to network destination” Flow action. Use a Homey date/time trigger to schedule it. The destination folder must already exist.": "Stel een bestemming in, test deze en kies deze in de Flow-actie “Maak back-up naar netwerkbestemming”. Plan de back-up met een datum-/tijdtrigger van Homey. De doelmap moet al bestaan.",
+  "Passwords stay in Homey app settings and are excluded from this app's backup exports and Flow tokens. SMB2 is for a trusted local network; this client does not provide SMB3 encryption. SFTP requires the server's SHA256 host-key fingerprint from its administrator.": "Wachtwoorden blijven in de Homey-appinstellingen en komen niet in de back-upexports of Flow-tokens. SMB2 is bedoeld voor een vertrouwd lokaal netwerk; deze client biedt geen SMB3-versleuteling. Voor SFTP is de SHA256-vingerafdruk van de serverhostsleutel nodig, op te vragen bij de beheerder.",
+  "Network destination": "Netwerkbestemming",
+  "Saved destinations": "Opgeslagen bestemmingen",
+  "Name": "Naam",
+  "Host / IP address": "Host / IP-adres",
+  "Port": "Poort",
+  "SMB share name": "Naam van SMB-share",
+  "Existing folder": "Bestaande map",
+  "SMB domain (optional)": "SMB-domein (optioneel)",
+  "Username": "Gebruikersnaam",
+  "Password": "Wachtwoord",
+  "SFTP SHA256 host-key fingerprint": "SFTP SHA256-vingerafdruk van hostsleutel",
+  "Timeout in milliseconds (5000–120000)": "Tijdslimiet in milliseconden (5000–120000)",
+  "Save destination": "Bestemming opslaan",
+  "Test connection": "Verbinding testen",
+  "Back up now": "Nu back-up maken",
+  "Remove destination": "Bestemming verwijderen",
+  "Flow scheduling runs once per action. Use the completion/failure trigger cards for follow-up actions. The existing WebDAV schedule remains configured separately.": "Een geplande Flow voert de back-up eenmaal per actie uit. Gebruik de triggerkaarten voor geslaagde en mislukte back-ups voor vervolgacties. Het bestaande WebDAV-schema wordt apart ingesteld."
+});
 function setLanguage(value){language=String(value).toLowerCase().startsWith('nl')?'nl':'en';}
 function getLanguage(){return language;}
 function t(value){const text=String(value);return dictionaries[language][text] ?? text;}

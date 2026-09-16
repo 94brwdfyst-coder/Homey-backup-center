@@ -1,0 +1,634 @@
+[
+  {
+    "name": "@awo00/smb2",
+    "version": "1.1.1",
+    "license": "MIT",
+    "path": "node_modules/@awo00/smb2",
+    "licenseFiles": [
+      "LICENSE.md"
+    ]
+  },
+  {
+    "name": "after",
+    "version": "0.8.2",
+    "license": "MIT",
+    "path": "node_modules/after",
+    "licenseFiles": [
+      "LICENCE"
+    ]
+  },
+  {
+    "name": "arraybuffer.slice",
+    "version": "0.0.7",
+    "license": "MIT",
+    "path": "node_modules/arraybuffer.slice",
+    "licenseFiles": [
+      "LICENCE"
+    ]
+  },
+  {
+    "name": "asn1",
+    "version": "0.2.6",
+    "license": "MIT",
+    "path": "node_modules/asn1",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "asynckit",
+    "version": "0.4.0",
+    "license": "MIT",
+    "path": "node_modules/asynckit",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "backo2",
+    "version": "1.0.2",
+    "license": "MIT",
+    "path": "node_modules/backo2",
+    "licenseFiles": []
+  },
+  {
+    "name": "base64-arraybuffer",
+    "version": "0.1.4",
+    "license": "MISSING",
+    "path": "node_modules/base64-arraybuffer",
+    "licenseFiles": [
+      "LICENSE-MIT"
+    ]
+  },
+  {
+    "name": "bcrypt-pbkdf",
+    "version": "1.0.2",
+    "license": "BSD-3-Clause",
+    "path": "node_modules/bcrypt-pbkdf",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "blob",
+    "version": "0.0.5",
+    "license": "MIT",
+    "path": "node_modules/blob",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "buffer-from",
+    "version": "1.1.2",
+    "license": "MIT",
+    "path": "node_modules/buffer-from",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "buildcheck",
+    "version": "0.0.7",
+    "license": "MISSING",
+    "path": "node_modules/buildcheck",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "call-bind-apply-helpers",
+    "version": "1.0.2",
+    "license": "MIT",
+    "path": "node_modules/call-bind-apply-helpers",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "combined-stream",
+    "version": "1.0.8",
+    "license": "MIT",
+    "path": "node_modules/combined-stream",
+    "licenseFiles": [
+      "License"
+    ]
+  },
+  {
+    "name": "component-bind",
+    "version": "1.0.0",
+    "license": "MISSING",
+    "path": "node_modules/component-bind",
+    "licenseFiles": []
+  },
+  {
+    "name": "component-emitter",
+    "version": "1.3.1",
+    "license": "MIT",
+    "path": "node_modules/component-emitter",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "component-inherit",
+    "version": "0.0.3",
+    "license": "MISSING",
+    "path": "node_modules/component-inherit",
+    "licenseFiles": []
+  },
+  {
+    "name": "concat-stream",
+    "version": "2.0.0",
+    "license": "MIT",
+    "path": "node_modules/concat-stream",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "cpu-features",
+    "version": "0.0.10",
+    "license": "MISSING",
+    "path": "node_modules/cpu-features",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "debug",
+    "version": "3.1.0",
+    "license": "MIT",
+    "path": "node_modules/debug",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "delayed-stream",
+    "version": "1.0.0",
+    "license": "MIT",
+    "path": "node_modules/delayed-stream",
+    "licenseFiles": [
+      "License"
+    ]
+  },
+  {
+    "name": "des.js",
+    "version": "1.1.0",
+    "license": "MIT",
+    "path": "node_modules/des.js",
+    "licenseFiles": []
+  },
+  {
+    "name": "dunder-proto",
+    "version": "1.0.1",
+    "license": "MIT",
+    "path": "node_modules/dunder-proto",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "engine.io-client",
+    "version": "3.5.6",
+    "license": "MIT",
+    "path": "node_modules/engine.io-client",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "engine.io-parser",
+    "version": "2.2.1",
+    "license": "MIT",
+    "path": "node_modules/engine.io-parser",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "es-define-property",
+    "version": "1.0.1",
+    "license": "MIT",
+    "path": "node_modules/es-define-property",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "es-errors",
+    "version": "1.3.0",
+    "license": "MIT",
+    "path": "node_modules/es-errors",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "es-object-atoms",
+    "version": "1.1.2",
+    "license": "MIT",
+    "path": "node_modules/es-object-atoms",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "es-set-tostringtag",
+    "version": "2.1.0",
+    "license": "MIT",
+    "path": "node_modules/es-set-tostringtag",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "form-data",
+    "version": "4.0.6",
+    "license": "MIT",
+    "path": "node_modules/form-data",
+    "licenseFiles": [
+      "License"
+    ]
+  },
+  {
+    "name": "function-bind",
+    "version": "1.1.2",
+    "license": "MIT",
+    "path": "node_modules/function-bind",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "get-intrinsic",
+    "version": "1.3.0",
+    "license": "MIT",
+    "path": "node_modules/get-intrinsic",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "get-proto",
+    "version": "1.0.1",
+    "license": "MIT",
+    "path": "node_modules/get-proto",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "gopd",
+    "version": "1.2.0",
+    "license": "MIT",
+    "path": "node_modules/gopd",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "has-binary2",
+    "version": "1.0.3",
+    "license": "MIT",
+    "path": "node_modules/has-binary2",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "has-cors",
+    "version": "1.1.0",
+    "license": "MIT",
+    "path": "node_modules/has-cors",
+    "licenseFiles": []
+  },
+  {
+    "name": "has-symbols",
+    "version": "1.1.0",
+    "license": "MIT",
+    "path": "node_modules/has-symbols",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "has-tostringtag",
+    "version": "1.0.2",
+    "license": "MIT",
+    "path": "node_modules/has-tostringtag",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "hasown",
+    "version": "2.0.4",
+    "license": "MIT",
+    "path": "node_modules/hasown",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "homey-api",
+    "version": "3.19.2",
+    "license": "SEE LICENSE",
+    "path": "node_modules/homey-api",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "indexof",
+    "version": "0.0.1",
+    "license": "MISSING",
+    "path": "node_modules/indexof",
+    "licenseFiles": []
+  },
+  {
+    "name": "inherits",
+    "version": "2.0.4",
+    "license": "ISC",
+    "path": "node_modules/inherits",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "isarray",
+    "version": "2.0.1",
+    "license": "MIT",
+    "path": "node_modules/isarray",
+    "licenseFiles": []
+  },
+  {
+    "name": "js-md4",
+    "version": "0.3.2",
+    "license": "MIT",
+    "path": "node_modules/js-md4",
+    "licenseFiles": [
+      "LICENSE.txt"
+    ]
+  },
+  {
+    "name": "math-intrinsics",
+    "version": "1.1.0",
+    "license": "MIT",
+    "path": "node_modules/math-intrinsics",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "mime-db",
+    "version": "1.52.0",
+    "license": "MIT",
+    "path": "node_modules/mime-db",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "mime-types",
+    "version": "2.1.35",
+    "license": "MIT",
+    "path": "node_modules/mime-types",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "minimalistic-assert",
+    "version": "1.0.1",
+    "license": "ISC",
+    "path": "node_modules/minimalistic-assert",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "moment",
+    "version": "2.31.0",
+    "license": "MIT",
+    "path": "node_modules/moment",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "moment-timezone",
+    "version": "0.5.48",
+    "license": "MIT",
+    "path": "node_modules/moment-timezone",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "ms",
+    "version": "2.0.0",
+    "license": "MIT",
+    "path": "node_modules/ms",
+    "licenseFiles": [
+      "license.md"
+    ]
+  },
+  {
+    "name": "nan",
+    "version": "2.29.0",
+    "license": "MIT",
+    "path": "node_modules/nan",
+    "licenseFiles": [
+      "LICENSE.md"
+    ]
+  },
+  {
+    "name": "node-fetch",
+    "version": "2.7.0",
+    "license": "MIT",
+    "path": "node_modules/node-fetch",
+    "licenseFiles": [
+      "LICENSE.md"
+    ]
+  },
+  {
+    "name": "parseqs",
+    "version": "0.0.6",
+    "license": "MIT",
+    "path": "node_modules/parseqs",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "parseuri",
+    "version": "0.0.6",
+    "license": "MIT",
+    "path": "node_modules/parseuri",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "readable-stream",
+    "version": "3.6.2",
+    "license": "MIT",
+    "path": "node_modules/readable-stream",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "safe-buffer",
+    "version": "5.2.1",
+    "license": "MIT",
+    "path": "node_modules/safe-buffer",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "safer-buffer",
+    "version": "2.1.2",
+    "license": "MIT",
+    "path": "node_modules/safer-buffer",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "socket.io-client",
+    "version": "2.5.0",
+    "license": "MIT",
+    "path": "node_modules/socket.io-client",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "socket.io-parser",
+    "version": "3.3.6",
+    "license": "MIT",
+    "path": "node_modules/socket.io-parser",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "ssh2",
+    "version": "1.17.0",
+    "license": "MISSING",
+    "path": "node_modules/ssh2",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "ssh2-sftp-client",
+    "version": "12.1.1",
+    "license": "Apache-2.0",
+    "path": "node_modules/ssh2-sftp-client",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "string_decoder",
+    "version": "1.3.0",
+    "license": "MIT",
+    "path": "node_modules/string_decoder",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "to-array",
+    "version": "0.1.4",
+    "license": "MISSING",
+    "path": "node_modules/to-array",
+    "licenseFiles": [
+      "LICENCE"
+    ]
+  },
+  {
+    "name": "tr46",
+    "version": "0.0.3",
+    "license": "MIT",
+    "path": "node_modules/tr46",
+    "licenseFiles": []
+  },
+  {
+    "name": "tweetnacl",
+    "version": "0.14.5",
+    "license": "Unlicense",
+    "path": "node_modules/tweetnacl",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "typedarray",
+    "version": "0.0.6",
+    "license": "MIT",
+    "path": "node_modules/typedarray",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "util-deprecate",
+    "version": "1.0.2",
+    "license": "MIT",
+    "path": "node_modules/util-deprecate",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "webidl-conversions",
+    "version": "3.0.1",
+    "license": "BSD-2-Clause",
+    "path": "node_modules/webidl-conversions",
+    "licenseFiles": [
+      "LICENSE.md"
+    ]
+  },
+  {
+    "name": "whatwg-url",
+    "version": "5.0.0",
+    "license": "MIT",
+    "path": "node_modules/whatwg-url",
+    "licenseFiles": [
+      "LICENSE.txt"
+    ]
+  },
+  {
+    "name": "ws",
+    "version": "7.5.13",
+    "license": "MIT",
+    "path": "node_modules/ws",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "xmlhttprequest-ssl",
+    "version": "1.6.3",
+    "license": "MISSING",
+    "path": "node_modules/xmlhttprequest-ssl",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  {
+    "name": "yeast",
+    "version": "0.1.2",
+    "license": "MIT",
+    "path": "node_modules/yeast",
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  }
+]

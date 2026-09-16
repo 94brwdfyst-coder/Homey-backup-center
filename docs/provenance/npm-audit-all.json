@@ -1,0 +1,531 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "dockerode": {
+      "name": "dockerode",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "tar-fs"
+      ],
+      "effects": [],
+      "range": "3.0.0 - 4.0.4",
+      "nodes": [
+        "node_modules/dockerode"
+      ],
+      "fixAvailable": true
+    },
+    "engine.io-client": {
+      "name": "engine.io-client",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "parseuri"
+      ],
+      "effects": [
+        "homey-api",
+        "socket.io-client"
+      ],
+      "range": "1.0.2 - 6.1.1",
+      "nodes": [
+        "node_modules/engine.io-client"
+      ],
+      "fixAvailable": {
+        "name": "homey-api",
+        "version": "3.14.16",
+        "isSemVerMajor": true
+      }
+    },
+    "external-editor": {
+      "name": "external-editor",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "tmp"
+      ],
+      "effects": [
+        "inquirer"
+      ],
+      "range": ">=1.1.1",
+      "nodes": [
+        "node_modules/external-editor"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    },
+    "got": {
+      "name": "got",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1088948,
+          "name": "got",
+          "dependency": "got",
+          "title": "Got allows a redirect to a UNIX socket",
+          "url": "https://github.com/advisories/GHSA-pfrx-2q88-qq97",
+          "severity": "moderate",
+          "cwe": [],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": "<11.8.5"
+        }
+      ],
+      "effects": [
+        "package-json"
+      ],
+      "range": "<11.8.5",
+      "nodes": [
+        "node_modules/got"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    },
+    "homey": {
+      "name": "homey",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "homey-api",
+        "homey-lib",
+        "inquirer",
+        "sharp",
+        "update-notifier"
+      ],
+      "effects": [],
+      "range": ">=2.0.7",
+      "nodes": [
+        "node_modules/homey"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    },
+    "homey-api": {
+      "name": "homey-api",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "engine.io-client",
+        "socket.io-client"
+      ],
+      "effects": [
+        "homey"
+      ],
+      "range": ">=1.0.1",
+      "nodes": [
+        "node_modules/homey-api",
+        "node_modules/homey/node_modules/homey-api"
+      ],
+      "fixAvailable": {
+        "name": "homey-api",
+        "version": "3.14.16",
+        "isSemVerMajor": true
+      }
+    },
+    "homey-lib": {
+      "name": "homey-lib",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "image-size"
+      ],
+      "effects": [
+        "homey"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/homey/node_modules/homey-lib"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    },
+    "image-size": {
+      "name": "image-size",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1138808,
+          "name": "image-size",
+          "dependency": "image-size",
+          "title": "image-size: ICNS parser allows denial of service through an infinite loop",
+          "url": "https://github.com/advisories/GHSA-w3rx-r6r6-pgpr",
+          "severity": "high",
+          "cwe": [
+            "CWE-835"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<=2.0.2"
+        },
+        {
+          "source": 1138809,
+          "name": "image-size",
+          "dependency": "image-size",
+          "title": "image-size: JXL and HEIF parsers allow denial of service through infinite loops",
+          "url": "https://github.com/advisories/GHSA-5p2g-fcmc-qvqq",
+          "severity": "high",
+          "cwe": [
+            "CWE-835"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<=2.0.2"
+        }
+      ],
+      "effects": [
+        "homey-lib"
+      ],
+      "range": "<=2.0.2",
+      "nodes": [
+        "node_modules/image-size"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    },
+    "inquirer": {
+      "name": "inquirer",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "external-editor"
+      ],
+      "effects": [
+        "homey"
+      ],
+      "range": "3.0.0 - 8.2.6 || 9.0.0 - 9.3.7",
+      "nodes": [
+        "node_modules/inquirer"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    },
+    "latest-version": {
+      "name": "latest-version",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "package-json"
+      ],
+      "effects": [
+        "update-notifier"
+      ],
+      "range": "0.2.0 - 5.1.0",
+      "nodes": [
+        "node_modules/latest-version"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    },
+    "package-json": {
+      "name": "package-json",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "got"
+      ],
+      "effects": [
+        "latest-version"
+      ],
+      "range": "<=6.5.0",
+      "nodes": [
+        "node_modules/package-json"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    },
+    "parseuri": {
+      "name": "parseuri",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1107224,
+          "name": "parseuri",
+          "dependency": "parseuri",
+          "title": "parse-uri Regular expression Denial of Service (ReDoS)",
+          "url": "https://github.com/advisories/GHSA-6fx8-h7jm-663j",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-185",
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<2.0.0"
+        }
+      ],
+      "effects": [
+        "engine.io-client",
+        "socket.io-client"
+      ],
+      "range": "<2.0.0",
+      "nodes": [
+        "node_modules/parseuri"
+      ],
+      "fixAvailable": {
+        "name": "homey-api",
+        "version": "3.14.16",
+        "isSemVerMajor": true
+      }
+    },
+    "sharp": {
+      "name": "sharp",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1124066,
+          "name": "sharp",
+          "dependency": "sharp",
+          "title": "sharp inherited vulnerabilities in libvips: CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591",
+          "url": "https://github.com/advisories/GHSA-f88m-g3jw-g9cj",
+          "severity": "high",
+          "cwe": [
+            "CWE-1395"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.35.0"
+        },
+        {
+          "source": 1193725,
+          "name": "sharp",
+          "dependency": "sharp",
+          "title": "sharp: Vulnerabilities in libheif: GHSA-g89c-p67h-r497 and GHSA-2jg2-4ch7-h545",
+          "url": "https://github.com/advisories/GHSA-rgj7-g3m4-5g8c",
+          "severity": "high",
+          "cwe": [
+            "CWE-122"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.35.4"
+        }
+      ],
+      "effects": [
+        "homey"
+      ],
+      "range": "<=0.35.4-rc.0",
+      "nodes": [
+        "node_modules/sharp"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    },
+    "socket.io-client": {
+      "name": "socket.io-client",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "engine.io-client",
+        "parseuri"
+      ],
+      "effects": [
+        "homey-api"
+      ],
+      "range": "1.0.0-pre - 4.4.1",
+      "nodes": [
+        "node_modules/homey/node_modules/homey-api/node_modules/socket.io-client",
+        "node_modules/socket.io-client"
+      ],
+      "fixAvailable": {
+        "name": "homey-api",
+        "version": "3.14.16",
+        "isSemVerMajor": true
+      }
+    },
+    "tar-fs": {
+      "name": "tar-fs",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1109532,
+          "name": "tar-fs",
+          "dependency": "tar-fs",
+          "title": "tar-fs has a symlink validation bypass if destination directory is predictable with a specific tarball",
+          "url": "https://github.com/advisories/GHSA-vj76-c3g6-qr5v",
+          "severity": "high",
+          "cwe": [
+            "CWE-22",
+            "CWE-61"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=2.0.0 <2.1.4"
+        },
+        {
+          "source": 1109543,
+          "name": "tar-fs",
+          "dependency": "tar-fs",
+          "title": "tar-fs can extract outside the specified dir with a specific tarball",
+          "url": "https://github.com/advisories/GHSA-8cj5-5rvv-wf4v",
+          "severity": "high",
+          "cwe": [
+            "CWE-22"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=2.0.0 <2.1.3"
+        },
+        {
+          "source": 1109552,
+          "name": "tar-fs",
+          "dependency": "tar-fs",
+          "title": "tar-fs Vulnerable to Link Following and Path Traversal via Extracting a Crafted tar File",
+          "url": "https://github.com/advisories/GHSA-pq67-2wwv-3xjx",
+          "severity": "high",
+          "cwe": [
+            "CWE-22"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": ">=2.0.0 <2.1.2"
+        }
+      ],
+      "effects": [
+        "dockerode"
+      ],
+      "range": "2.0.0 - 2.1.3",
+      "nodes": [
+        "node_modules/dockerode/node_modules/tar-fs"
+      ],
+      "fixAvailable": true
+    },
+    "tmp": {
+      "name": "tmp",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1109537,
+          "name": "tmp",
+          "dependency": "tmp",
+          "title": "tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter",
+          "url": "https://github.com/advisories/GHSA-52f5-9888-hmc6",
+          "severity": "low",
+          "cwe": [
+            "CWE-59"
+          ],
+          "cvss": {
+            "score": 2.5,
+            "vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": "<=0.2.3"
+        },
+        {
+          "source": 1120654,
+          "name": "tmp",
+          "dependency": "tmp",
+          "title": "tmp has Path Traversal via unsanitized prefix/postfix that enables directory escape",
+          "url": "https://github.com/advisories/GHSA-ph9p-34f9-6g65",
+          "severity": "high",
+          "cwe": [
+            "CWE-22"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.2.6"
+        }
+      ],
+      "effects": [
+        "external-editor"
+      ],
+      "range": "<=0.2.5",
+      "nodes": [
+        "node_modules/tmp"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    },
+    "update-notifier": {
+      "name": "update-notifier",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "latest-version"
+      ],
+      "effects": [
+        "homey"
+      ],
+      "range": "0.2.0 - 5.1.0",
+      "nodes": [
+        "node_modules/update-notifier"
+      ],
+      "fixAvailable": {
+        "name": "homey",
+        "version": "3.7.1",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 2,
+      "moderate": 8,
+      "high": 7,
+      "critical": 0,
+      "total": 17
+    },
+    "dependencies": {
+      "prod": 70,
+      "dev": 439,
+      "optional": 23,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 511
+    }
+  }
+}

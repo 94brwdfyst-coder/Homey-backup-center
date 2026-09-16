@@ -1,0 +1,121 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "engine.io-client": {
+      "name": "engine.io-client",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "parseuri"
+      ],
+      "effects": [
+        "homey-api",
+        "socket.io-client"
+      ],
+      "range": "1.0.2 - 6.1.1",
+      "nodes": [
+        "node_modules/engine.io-client"
+      ],
+      "fixAvailable": {
+        "name": "homey-api",
+        "version": "1.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "homey-api": {
+      "name": "homey-api",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "engine.io-client",
+        "socket.io-client"
+      ],
+      "effects": [],
+      "range": ">=1.0.1",
+      "nodes": [
+        "node_modules/homey-api"
+      ],
+      "fixAvailable": {
+        "name": "homey-api",
+        "version": "1.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "parseuri": {
+      "name": "parseuri",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1107224,
+          "name": "parseuri",
+          "dependency": "parseuri",
+          "title": "parse-uri Regular expression Denial of Service (ReDoS)",
+          "url": "https://github.com/advisories/GHSA-6fx8-h7jm-663j",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-185",
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<2.0.0"
+        }
+      ],
+      "effects": [
+        "engine.io-client",
+        "socket.io-client"
+      ],
+      "range": "<2.0.0",
+      "nodes": [
+        "node_modules/parseuri"
+      ],
+      "fixAvailable": {
+        "name": "homey-api",
+        "version": "1.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "socket.io-client": {
+      "name": "socket.io-client",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "engine.io-client",
+        "parseuri"
+      ],
+      "effects": [
+        "homey-api"
+      ],
+      "range": "1.0.0-pre - 4.4.1",
+      "nodes": [
+        "node_modules/socket.io-client"
+      ],
+      "fixAvailable": {
+        "name": "homey-api",
+        "version": "1.0.0",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 4,
+      "high": 0,
+      "critical": 0,
+      "total": 4
+    },
+    "dependencies": {
+      "prod": 70,
+      "dev": 439,
+      "optional": 23,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 511
+    }
+  }
+}

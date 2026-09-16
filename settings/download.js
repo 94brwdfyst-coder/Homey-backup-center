@@ -1,11 +1,11 @@
 'use strict';
 const BackupDownload = (()=>{
-  let activeUrl=null;
-  function dispose(){if(activeUrl)URL.revokeObjectURL(activeUrl);activeUrl=null;}
+  const activeUrls=new Set();
+  function dispose(){for(const url of activeUrls)URL.revokeObjectURL(url);activeUrls.clear();}
   async function save(blob,name,{status,links,shareOnly=false}){
     const t=BackupI18n.t;
     const fallback=()=>{
-      dispose();activeUrl=URL.createObjectURL(blob);
+      const activeUrl=URL.createObjectURL(blob);activeUrls.add(activeUrl);
       const a=document.createElement('a');a.href=activeUrl;a.download=name;a.textContent=t('Open or save the file');a.target='_blank';a.rel='noopener';
       links.replaceChildren(a);links.hidden=false;
       // Keep the link and URL alive: mobile webviews may consume them asynchronously.
@@ -14,9 +14,12 @@ const BackupDownload = (()=>{
     };
     status.textContent=t('Preparing file…');
     try {
-      const file=new File([blob],name,{type:blob.type||'application/json'});
-      const canShare=typeof navigator.share==='function' && navigator.canShare?.({files:[file]});
-      if(canShare && (shareOnly || !window.showSaveFilePicker)) {
+      const file=typeof File==='function' ? new File([blob],name,{type:blob.type||'application/json'}) : null;
+      let canShare=false;
+      if(shareOnly && file && typeof navigator.share==='function'){
+        try {canShare=Boolean(navigator.canShare?.({files:[file]}));} catch (_) { /* Permissions policy may deny sharing in an iframe. */ }
+      }
+      if(canShare) {
         await navigator.share({files:[file],title:t('Homey Backup Center')});
         status.textContent=t('File handed to the share sheet. Check the destination you selected.');return;
       }
@@ -34,6 +37,6 @@ const BackupDownload = (()=>{
       catch(failure){status.textContent=t('Download could not be started: ')+t(failure.message||String(failure));}
     }
   }
-  window.addEventListener('pagehide',dispose);
+  window.addEventListener('pagehide',event=>{if(!event.persisted)dispose();});
   return {save};
 })();

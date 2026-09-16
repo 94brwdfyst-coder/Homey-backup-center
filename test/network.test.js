@@ -28,3 +28,9 @@ test('Flow cards select stable IDs and filter completion events by destination',
  app.network.test=async()=>{throw Error('offline');};assert.equal(await flowCards.get('network_destination_reachable').run({destination:{id:t.id}}),false);
  const backup=await app.exportBackup();assert(!JSON.stringify(backup).includes('test-secret'));assert(!JSON.stringify(backup).includes('networkTargets'));
 });
+test('SFTP accepts Synology-style SHA1 fingerprints as well as SHA256',()=>{
+ const n=setup();
+ const common={type:'sftp',name:'NAS',host:'nas.local',port:22,username:'backup',password:'secret',directory:'/backup',timeoutMs:30000};
+ assert.doesNotThrow(()=>n.save({...common,fingerprint:'SHA1:'+'aa:'.repeat(19)+'aa'}));
+ assert.throws(()=>n.save({...common,name:'bad',fingerprint:'SHA1:not-a-fingerprint'}),/SHA256.*SHA1/);
+});

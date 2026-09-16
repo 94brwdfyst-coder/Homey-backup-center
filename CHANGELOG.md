@@ -1,3 +1,41 @@
+## 0.4.0
+- Promote the successfully field-tested SMB2/SFTP work to the 0.4 release line.
+- SMB2 uses NTLMv2 authentication; real connection/write test and real JSON backup validated against Samba on Ubuntu.
+- SFTP real connection/write test and JSON backup validated against OpenSSH on Ubuntu with SHA256 host-key verification.
+- Restore saved non-secret SMB/SFTP fields when reopening settings; passwords remain hidden.
+- Clarify SFTP host-key setup: use the existing server/NAS host-key fingerprint; SHA256 is recommended and SHA1 is also accepted.
+- Document exactly what was and was not field-tested.
+
+## 0.3.36 beta
+- Settings reopen the last selected network destination (or the first saved destination), so non-secret SMB/SFTP fields are restored instead of showing an empty new-destination form.
+- Password remains intentionally hidden and can be left empty to retain the saved secret.
+- Keeps the SMB NTLMv2 authentication fix from 0.3.35.
+
+## 0.3.34
+- Add safe SMB authentication diagnostics (error name/code/status/message; never credentials).
+- No SMB behavior change; diagnostic beta only.
+
+## 0.3.33 beta
+- Replace @awo00/smb2 1.1.1 with node-smb2 1.3.5 for the upstream NTLMv2 authentication fix.
+- Keep SMB stage diagnostics enabled while validating the fix against Samba.
+- No community release yet: this build is for SMB2 validation only.
+
+## 0.3.32
+- Kept the 0.3.30 settings UI/storage code unchanged.
+- Added SMB stage diagnostics for connection tests and backups.
+- Normalize SHA256/SHA1 fingerprint prefixes case-insensitively.
+
+## 0.3.30
+- Show network save/test progress and success/failure directly beside the controls.
+- Use protocol-specific SMB and SFTP folder labels, examples and hints.
+- Preserve safe worker diagnostic details during connection tests.
+
+## 0.3.29
+- Accept SHA256 and colon-separated SHA1 SFTP host-key fingerprints.
+- Clarify Synology-style SMB share vs. subfolder configuration.
+- Improve safe SMB connection diagnostics without exposing credentials.
+- Keep network destination testing separate from the existing WebDAV scheduler.
+
 ## 0.3.28 (local build)
 
 - Fix explicit browser download/share selection and iframe fallback capability handling.

@@ -30,7 +30,7 @@
 
 <section class="card"><h2>SMB / SFTP network backups</h2>
 <p>Configure a destination, test it, then select it in the “Create backup to network destination” Flow action. Use a Homey date/time trigger to schedule it. The destination folder must already exist.</p>
-<p>Passwords stay in Homey app settings and are excluded from this app's backup exports and Flow tokens. SMB2 is for a trusted local network; this client does not provide SMB3 encryption. SFTP requires the server's SHA256 host-key fingerprint from its administrator.</p>
+<p>Passwords stay in Homey app settings and are excluded from this app's backup exports and Flow tokens. SMB2 is for a trusted local network; this client does not provide SMB3 encryption. SFTP requires the server host-key fingerprint. SHA256 is recommended, but SHA1 fingerprints are also accepted. Use the fingerprint of the existing SSH/SFTP host key shown by your NAS/server; do not create a separate key for Backup Center.</p>
 <fieldset id="network-fields"><legend>Network destination</legend>
 <label for="net-select">Saved destinations</label><select id="net-select"></select>
 <div class="grid">
@@ -38,15 +38,15 @@
 <div class="field"><label for="net-type">Protocol</label><select id="net-type"><option value="sftp">SFTP</option><option value="smb">SMB2</option></select></div>
 <div class="field"><label for="net-host">Host / IP address</label><input id="net-host" type="text" autocomplete="off"></div>
 <div class="field"><label for="net-port">Port</label><input id="net-port" type="number" autocomplete="off"></div>
-<div class="field"><label for="net-share">SMB share name</label><input id="net-share" type="text" autocomplete="off"></div>
-<div class="field"><label for="net-directory">Existing folder</label><input id="net-directory" type="text" autocomplete="off"></div>
+<div class="field"><label for="net-share">SMB share name</label><input id="net-share" type="text" autocomplete="off" placeholder="e.g. home"><p class="hint">Only the share name, not smb://host/ or a folder path.</p></div>
+<div class="field"><label id="net-directory-label" for="net-directory">Remote folder</label><input id="net-directory" type="text" autocomplete="off" placeholder="/home/user/homey-backups"><p id="net-directory-hint" class="hint">SFTP: enter the existing absolute remote folder, for example /home/user/homey-backups.</p></div>
 <div class="field"><label for="net-domain">SMB domain (optional)</label><input id="net-domain" type="text" autocomplete="off"></div>
 <div class="field"><label for="net-username">Username</label><input id="net-username" type="text" autocomplete="off"></div>
 <div class="field"><label for="net-password">Password</label><input id="net-password" type="password" autocomplete="new-password"></div>
-<div class="field"><label for="net-fingerprint">SFTP SHA256 host-key fingerprint</label><input id="net-fingerprint" type="text" autocomplete="off"></div>
+<div class="field"><label for="net-fingerprint">SFTP host-key fingerprint</label><input id="net-fingerprint" type="text" autocomplete="off" placeholder="SHA256:… or SHA1:aa:bb:…"><p class="hint">Copy the host-key fingerprint shown by your NAS/server. SHA256 is recommended; SHA1 is also supported. Do not invent or generate a new key for Backup Center.</p></div>
 <div class="field"><label for="net-timeoutMs">Timeout in milliseconds (5000–120000)</label><input id="net-timeoutMs" type="number" autocomplete="off"></div>
-</div><div class="target-actions"><button id="net-save">Save destination</button><button id="net-test" class="secondary">Test connection</button><button id="net-backup">Back up now</button><button id="net-remove" class="danger">Remove destination</button></div>
-</fieldset><p id="network-status" role="status" style="white-space:pre-wrap"></p>
+</div><p id="network-status" class="hint" role="status" aria-live="polite" style="white-space:pre-wrap"></p><div class="target-actions"><button id="net-save">Save destination</button><button id="net-test" class="secondary">Test connection</button><button id="net-backup">Back up now</button><button id="net-remove" class="danger">Remove destination</button></div>
+</fieldset>
 <p>Flow scheduling runs once per action. Use the completion/failure trigger cards for follow-up actions. The existing WebDAV schedule remains configured separately.</p>
 </section>
 <section class="card"><h2>3. Back-up openen</h2>

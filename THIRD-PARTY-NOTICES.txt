@@ -3,7 +3,7 @@ No dependency source files were modified.
 
 
 ========================================================================
-@awo00/smb2 1.1.1 — MIT
+node-smb2 1.3.5 — MIT
 
 LICENSE.md
 MIT License

@@ -6,7 +6,7 @@ const realRequire=createRequire(require.resolve('../lib/network-worker'));
 function adapter(fail=false){
  const calls=[];const tree={readDirectory:async p=>calls.push(['list',p]),createFile:async(p,b)=>{calls.push(['write',p,b]);if(fail)throw Error('secret server error');},renameFile:async(a,b)=>calls.push(['rename',a,b]),removeFile:async p=>calls.push(['remove',p])};
  class Client{constructor(host,opts){calls.push(['client',host,opts]);}on(){}async authenticate(auth){calls.push(['auth',auth]);return {connectTree:async share=>{calls.push(['share',share]);return tree;}};}async close(){calls.push(['close']);}}
- const sandbox={module:{exports:{}},Buffer,setTimeout,require:name=>name==='node:worker_threads'?{parentPort:null}:name==='@awo00/smb2'?{Client}:realRequire(name)};vm.runInNewContext(fs.readFileSync(require.resolve('../lib/network-worker'),'utf8'),sandbox);
+ const sandbox={module:{exports:{}},Buffer,setTimeout,require:name=>name==='node:worker_threads'?{parentPort:null}:name==='node-smb2'?{Client}:realRequire(name)};vm.runInNewContext(fs.readFileSync(require.resolve('../lib/network-worker'),'utf8'),sandbox);
  return {calls,transfer:sandbox.module.exports.transfer};
 }
 const target={type:'smb',host:'nas',port:445,username:'backup',password:'secret',domain:'WORKGROUP',share:'backups',directory:'Homey',timeoutMs:30000};

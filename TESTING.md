@@ -45,3 +45,13 @@ All 22 local regression tests pass, plus a real Chromium end-to-end UI test with
 Run `npm ci`, `npm run lint`, `npm test`, `npm run build` on Node 22+. Tests include a temporary real SFTP server, host-key mismatch, incorrect password, write denial, timeout termination, SMB adapter order/cleanup, settings form submission/polling, concurrent-run exclusion, secret redaction and Flow destination filtering. Existing restore/scheduler/transfer tests remain included. Local listening sockets must be permitted for SFTP tests.
 
 Manual acceptance: test on a real SMB NAS and SFTP server; verify the final JSON can be opened by Backup Center; exercise success/failure Flow cards and a scheduled date/time Flow on Homey; retest the reported Android and Windows Chrome/Firefox download behavior. SMB signing/encryption compatibility and browser behavior on those devices are not established by mocks or DOM tests.
+
+
+## 0.4.0 field acceptance — 16 September 2026
+
+Completed on a real Homey Pro with an Ubuntu server at the test LAN target.
+
+- SMB2: saved destination reloaded, connection and write-rights check passed, runtime reported NTLMv2 authentication, and a real Homey Backup Center JSON backup was written successfully to a Samba share.
+- SFTP: saved destination reloaded, SHA256 host-key verification passed, connection and write-rights check passed, and a real Homey Backup Center JSON backup was written successfully through OpenSSH/SFTP.
+- The SFTP test used SHA256. SHA1 parsing/verification remains supported for NAS compatibility but was not field-tested in this acceptance run.
+- No claim is made here that Synology, QNAP, or every SMB/SFTP server configuration has been validated.

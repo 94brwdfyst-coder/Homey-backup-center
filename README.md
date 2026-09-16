@@ -1,4 +1,4 @@
-# Homey Backup Center / Homey Backupcentrum 0.3.27
+# Homey Backup Center / Homey Backupcentrum 0.4.0
 
 ## Nederlands
 
@@ -85,6 +85,35 @@ Saved API Keys, WebDAV passwords and the exact Logic variable `ha_backup_token` 
 Extract the zip, enter `hbc0327`, run `npm ci --ignore-scripts`, `homey app validate --level publish` and `homey app install`. Select the intended Homey beforehand if needed. Do not use `--clean` when retaining app settings. Publishing is a separate action.
 
 0.3.27 is a development/test build. Local tests and publish-level validation pass; actual Homey, Android and phone notification tests remain. See `TESTING.md`. This app does not replace a complete Homey system backup or recreate radio pairings. Keep custom Developer App source folders separately.
+
+## 0.4.0 — Network backup release
+
+SMB2 and SFTP network backups are now field-tested end to end on a Homey Pro against an Ubuntu server on the local network. SMB2 authentication uses NTLMv2. Saved non-secret destination fields are restored when reopening settings; passwords remain hidden and can be left empty to retain the saved value.
+
+### SFTP host-key fingerprint
+
+SFTP verifies the identity of the SSH/SFTP server before sending a backup. Enter the fingerprint of the **existing server host key**. SHA256 is recommended; SHA1 is also accepted for NAS/server interfaces that only show SHA1. Do not invent a fingerprint and do not create a separate SSH key just for Backup Center.
+
+On Linux/OpenSSH, an administrator can display the ED25519 host-key fingerprint with:
+
+```sh
+sudo ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+```
+
+Example output:
+
+```text
+256 SHA256:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx server (ED25519)
+```
+
+Copy only the `SHA256:...` value into Backup Center. If your NAS shows a colon-separated SHA1 host-key fingerprint, `SHA1:aa:bb:...` is supported as well. Verify the fingerprint through a trusted administrator/NAS interface before accepting it.
+
+### Field-tested in 0.4.0
+
+- SMB2: connection/write test and a real JSON backup to Samba on Ubuntu; NTLMv2 confirmed in the app runtime.
+- SFTP: host-key verification, connection/write test and a real JSON backup to OpenSSH/SFTP on Ubuntu using SHA256.
+- Saved SMB2/SFTP non-secret settings reload correctly in the settings UI.
+- Synology, QNAP and other NAS models are supported targets in principle but were **not** part of this specific end-to-end validation. SHA1 acceptance exists for NAS compatibility but was not the fingerprint format used in this field test.
 
 ## 0.3.28 — SMB/SFTP and Homey Flow
 

@@ -28,18 +28,18 @@
 <p id="webdavStatus" role="status"></p>
 </section>
 
-<section class="card"><h2>SMB / SFTP network backups</h2>
+<section class="card"><h2>SMB / SFTP / FTP network backups</h2>
 <p>Configure a destination, test it, then select it in the “Create backup to network destination” Flow action. Use a Homey date/time trigger to schedule it. The destination folder must already exist.</p>
-<p>Passwords stay in Homey app settings and are excluded from this app's backup exports and Flow tokens. SMB2 is for a trusted local network; this client does not provide SMB3 encryption. SFTP requires the server host-key fingerprint. SHA256 is recommended, but SHA1 fingerprints are also accepted. Use the fingerprint of the existing SSH/SFTP host key shown by your NAS/server; do not create a separate key for Backup Center.</p>
+<p>Passwords stay in Homey app settings and are excluded from this app's backup exports and Flow tokens. SMB2 is for a trusted local network; this client does not provide SMB3 encryption. FTP is not encrypted and should only be used on a trusted network. SFTP requires the server host-key fingerprint. SHA256 is recommended, but SHA1 fingerprints are also accepted. Use the fingerprint of the existing SSH/SFTP host key shown by your NAS/server; do not create a separate key for Backup Center.</p>
 <fieldset id="network-fields"><legend>Network destination</legend>
 <label for="net-select">Saved destinations</label><select id="net-select"></select>
 <div class="grid">
 <div class="field"><label for="net-name">Name</label><input id="net-name" type="text" autocomplete="off"></div>
-<div class="field"><label for="net-type">Protocol</label><select id="net-type"><option value="sftp">SFTP</option><option value="smb">SMB2</option></select></div>
+<div class="field"><label for="net-type">Protocol</label><select id="net-type"><option value="sftp">SFTP</option><option value="smb">SMB2</option><option value="ftp">FTP</option></select></div>
 <div class="field"><label for="net-host">Host / IP address</label><input id="net-host" type="text" autocomplete="off"></div>
 <div class="field"><label for="net-port">Port</label><input id="net-port" type="number" autocomplete="off"></div>
 <div class="field"><label for="net-share">SMB share name</label><input id="net-share" type="text" autocomplete="off" placeholder="e.g. home"><p class="hint">Only the share name, not smb://host/ or a folder path.</p></div>
-<div class="field"><label id="net-directory-label" for="net-directory">Remote folder</label><input id="net-directory" type="text" autocomplete="off" placeholder="/home/user/backups"><p id="net-directory-hint" class="hint">SFTP: enter the existing absolute remote folder, for example /home/user/backups.</p></div>
+<div class="field"><label id="net-directory-label" for="net-directory">Remote folder</label><input id="net-directory" type="text" autocomplete="off" placeholder="/home/user/backups"><p id="net-directory-hint" class="hint">SFTP: enter the existing absolute remote folder, for example /home/user/backups.</p><p id="net-ftp-warning" class="hint" hidden><b>Warning:</b> FTP is not encrypted. Use it only on a trusted network.</p></div>
 <div class="field"><label for="net-domain">SMB domain (optional)</label><input id="net-domain" type="text" autocomplete="off"></div>
 <div class="field"><label for="net-username">Username</label><input id="net-username" type="text" autocomplete="off"></div>
 <div class="field"><label for="net-password">Password</label><input id="net-password" type="password" autocomplete="new-password"></div>

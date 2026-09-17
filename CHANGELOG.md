@@ -1,3 +1,15 @@
+## 0.4.3
+- Add FTP as a network backup destination alongside SMB2 and SFTP.
+- Add FTP connection/write testing and real backup uploads with temporary-file rename and cleanup.
+- Show a clear warning that FTP is unencrypted and should only be used on a trusted network.
+- Add FTP validation, worker and settings UI regression tests.
+- SMB2 and SFTP backup behavior remains supported and was regression-tested.
+
+## 0.4.2
+- Finalize the Backup Center App Store presentation and certification updates.
+- Clean up visible branding and use the Backup_Center prefix for newly created backup files.
+- Keep the tested SMB2 and SFTP network backup functionality.
+
 ## 0.4.1
 - Rename the app to Backup Center and update the English and Dutch store taglines.
 - Replace the store readme with concise product information without release history.

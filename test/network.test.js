@@ -9,9 +9,22 @@ test('destination validation, secret preservation, deletion and endpoint changes
  const n=setup();const [t]=n.save(target);assert.equal(t.hasPassword,true);assert.equal(t.password,undefined);
  assert.equal(n.save({...t,password:''})[0].id,t.id);
  for(const change of [{host:'new.invalid'},{username:'different'},{port:2222},{fingerprint:'SHA256:'+'B'.repeat(43)}])assert.throws(()=>n.save({...t,...change,password:''}),/password/);
- for(const change of [{directory:'../escape'},{host:'sftp://nas'},{port:0.5},{timeoutMs:500},{fingerprint:'anything'},{type:'ftp'}])assert.throws(()=>n.save({...target,...change}));
+ for(const change of [{directory:'../escape'},{host:'sftp://nas'},{port:0.5},{timeoutMs:500},{fingerprint:'anything'}])assert.throws(()=>n.save({...target,...change}));
  n.remove(t.id);assert.throws(()=>n.get(t.id));
 });
+
+test('FTP destination uses port 21 and does not require SMB or SFTP fields',()=>{
+ const n=setup();
+ const [t]=n.save({type:'ftp',name:'FTP NAS',host:'nas.local',username:'backup',password:'secret',directory:'/backup',timeoutMs:30000});
+ assert.equal(t.type,'ftp');
+ assert.equal(t.port,21);
+ assert.equal(t.directory,'/backup');
+ assert.equal(t.share,'');
+ assert.equal(t.domain,'');
+ assert.equal(t.fingerprint,'');
+ assert.equal(t.hasPassword,true);
+});
+
 test('backup success emits only safe tokens; failed event delivery cannot undo success',async()=>{
  let call,event;const n=setup(async(...args)=>{call=args;return {ok:true};},async(...args)=>{event=args;throw Error('Flow failed');});const [t]=n.save(target);const result=await n.backup(t.id);
  assert.equal(call[0].password,'test-secret');assert.match(call[1],/^Backup_Center_.*\.json$/);assert.equal(JSON.parse(call[2]).version,4);assert.equal(result.ok,true);assert.equal(event[0],'network_backup_completed');assert(!JSON.stringify(event).includes('test-secret'));assert.equal(n.busy,false);

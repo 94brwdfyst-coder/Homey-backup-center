@@ -7,7 +7,26 @@ const NetworkUi=(()=>{
  const selectionKey='homeyBackupCenter.network.selected';
  function rememberSelection(){try{if(selected)localStorage.setItem(selectionKey,selected);else localStorage.removeItem(selectionKey);}catch(_){/* Storage can be unavailable in embedded settings views. */}}
  const label=(en,nl)=>BackupI18n.getLanguage()==='nl'?nl:en;
- function protocol(){const smb=el('net-type').value==='smb';for(const key of ['share','domain'])el('net-'+key).parentElement.hidden=!smb;el('net-fingerprint').parentElement.hidden=smb;const l=el('net-directory-label'),h=el('net-directory-hint'),d=el('net-directory');if(smb){l.textContent=label('Existing folder inside share','Bestaande map binnen de share');h.textContent=label('Example: for smb://NAS/home/backup/homey use share = home and folder = backup/homey. Do not start the share name with /.','Voorbeeld: gebruik voor smb://NAS/home/backup/homey share = home en map = backup/homey. Zet geen / voor de sharenaam.');d.placeholder='backup/homey';}else{l.textContent=label('Remote folder','Externe map');h.textContent=label('SFTP: enter an existing absolute folder on the server, for example /home/user/backups.','SFTP: vul een bestaande absolute map op de server in, bijvoorbeeld /home/gebruiker/backups.');d.placeholder='/home/user/backups';}}
+ function protocol(){
+  const type=el('net-type').value,smb=type==='smb',sftp=type==='sftp',ftp=type==='ftp';
+  for(const key of ['share','domain'])el('net-'+key).parentElement.hidden=!smb;
+  el('net-fingerprint').parentElement.hidden=!sftp;
+  el('net-ftp-warning').hidden=!ftp;
+  const l=el('net-directory-label'),h=el('net-directory-hint'),d=el('net-directory');
+  if(smb){
+   l.textContent=label('Existing folder inside share','Bestaande map binnen de share');
+   h.textContent=label('Example: for smb://NAS/home/backup/homey use share = home and folder = backup/homey. Do not start the share name with /.','Voorbeeld: gebruik voor smb://NAS/home/backup/homey share = home en map = backup/homey. Zet geen / voor de sharenaam.');
+   d.placeholder='backup/homey';
+  }else if(ftp){
+   l.textContent=label('Remote FTP folder','Externe FTP-map');
+   h.textContent=label('FTP: enter an existing folder on the server, for example /home/user/backups.','FTP: vul een bestaande map op de server in, bijvoorbeeld /home/gebruiker/backups.');
+   d.placeholder='/home/user/backups';
+  }else{
+   l.textContent=label('Remote folder','Externe map');
+   h.textContent=label('SFTP: enter an existing absolute folder on the server, for example /home/user/backups.','SFTP: vul een bestaande absolute map op de server in, bijvoorbeeld /home/gebruiker/backups.');
+   d.placeholder='/home/user/backups';
+  }
+ }
  function edit(t={}){
   selected=t.id||'';
   const defaults={type:'sftp',port:22,directory:'/',timeoutMs:30000};
@@ -23,7 +42,7 @@ const NetworkUi=(()=>{
  }
  function status(text,kind=''){const s=el('network-status');s.textContent=text;s.className='hint'+(kind?' '+kind:'');s.scrollIntoView({block:'nearest',behavior:'smooth'});} async function act(fn){if(busy)return;busy=true;el('network-fields').disabled=true;status(label('Working…','Bezig…'));try{await fn();}catch(e){status('✗ '+(e.message||String(e)),'error');}finally{busy=false;el('network-fields').disabled=false;}}
  async function init(){
-  el('net-type').onchange=()=>{el('net-port').value=el('net-type').value==='smb'?445:22;el('net-directory').value=el('net-type').value==='smb'?'':'/';protocol();};
+  el('net-type').onchange=()=>{const type=el('net-type').value;el('net-port').value=type==='smb'?445:type==='ftp'?21:22;el('net-directory').value=type==='smb'?'':'/';protocol();};
   el('net-select').onchange=()=>{selected=el('net-select').value;rememberSelection();edit(targets.find(t=>t.id===selected));};
   el('net-save').onclick=()=>act(async()=>{status(label('Saving destination…','Bestemming opslaan…'));await save();status('✓ '+label('Destination saved.','Bestemming opgeslagen.'),'ok');});
   el('net-remove').onclick=()=>act(async()=>{if(!selected)return;targets=await api('POST','/network/remove',{id:selected});selected='';rememberSelection();render();edit();status('✓ '+label('Destination removed. Existing Flows must select another destination.','Bestemming verwijderd. Kies in bestaande Flows een andere bestemming.'),'ok');});

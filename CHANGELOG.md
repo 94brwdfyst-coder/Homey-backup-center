@@ -1,3 +1,9 @@
+## 0.4.4
+- Make the selective restore workflow clearer in English and Dutch.
+- Clarify that creating a restore plan does not change anything on Homey.
+- Make it clearer that users can select only the detected changes they want to restore.
+- Add a regression test for the selective restore UI text.
+
 ## 0.4.3
 - Add FTP as a network backup destination alongside SMB2 and SFTP.
 - Add FTP connection/write testing and real backup uploads with temporary-file rename and cleanup.

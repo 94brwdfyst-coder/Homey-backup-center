@@ -256,7 +256,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
   startRestorePlan(id){return this.jobs.start(()=>this.transfers.withBackup(id,async data=>this.transfers.publish(await this.buildRestorePlan(data))));}
   validateSelection(selection){
     if(!selection || typeof selection!=='object' || Array.isArray(selection))throw Error('Invalid restore selection.');
-    for(const [key,value] of Object.entries(selection))if(!['zones','logic','devices','standardFlows','advancedFlows'].includes(key) || !Array.isArray(value) || value.some(x=>typeof x!=='string'))throw Error('Invalid restore selection.');
+    for(const [key,value] of Object.entries(selection))if(!['zones','logic','betterLogicVariables','devices','standardFlows','advancedFlows'].includes(key) || !Array.isArray(value) || value.some(x=>typeof x!=='string'))throw Error('Invalid restore selection.');
     return selection;
   }
   startRestoreRun(id,confirm,selectionId){
@@ -323,6 +323,40 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
     return this.writeClient;
   }
 
+  async getBetterLogicVariables() {
+    const appId = 'net.i-dev.betterlogic';
+
+    // /ALL is the canonical BLL source and can also contain non-persistent variables.
+    const bllApp = await this.client.apps.getApp({id: appId});
+    const all = await bllApp.get({path: '/ALL'});
+    if (!Array.isArray(all)) throw new Error('Better Logic Library /ALL returned invalid data.');
+
+    // The app setting contains the variables that BLL persists permanently.
+    const stored = await this.client.apps.getAppSetting({
+      id: appId,
+      name: 'variables'
+    });
+    const persistentNames = new Set(
+      (Array.isArray(stored) ? stored : [])
+        .map(variable => variable?.name)
+        .filter(name => typeof name === 'string')
+    );
+
+    return all
+      .filter(variable =>
+        variable
+        && typeof variable.name === 'string'
+        && ['boolean', 'number', 'string'].includes(variable.type)
+        && !isSecretVariable(variable.name)
+      )
+      .map(variable => ({
+        name: variable.name,
+        type: variable.type,
+        value: variable.value,
+        persistent: persistentNames.has(variable.name)
+      }));
+  }
+
   async exportBackup() {
     if (!this.client) throw new Error(tr('De app start nog op. Probeer het zo opnieuw.'));
     const jobs = {
@@ -342,6 +376,16 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
       if (entry.status === 'fulfilled') result[keys[i]] = entry.value;
       else { result[keys[i]] = {}; warnings.push(keys[i] + ': ' + (entry.reason?.message || entry.reason)); }
     });
+    let betterLogicVariables = [];
+    try {
+      betterLogicVariables = await this.getBetterLogicVariables();
+    } catch (error) {
+      const message = String(error?.message || error);
+      // BLL is optional. Its absence or unavailability must never abort a normal backup.
+      if (!/not found|404|not installed/i.test(message)) {
+        warnings.push('better-logic-library: ' + message);
+      }
+    }
     if (!Object.keys(result.standard).length && !Object.keys(result.advanced).length) {
       throw new Error(tr('Flows konden niet worden opgehaald. Back-up is afgebroken.'));
     }
@@ -395,17 +439,18 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
       ...pick(a, ['name','version','enabled','state','origin','channel','updateAvailable','crashed','crashCount'])
     }));
     return {
-      format: 'homey-backup-center', version: 4, createdAt: new Date().toISOString(),
+      format: 'homey-backup-center', version: 5, createdAt: new Date().toISOString(),
       deviceSettingsValueSource: 'device.settings',
       note: tr('WebDAV-wachtwoorden worden niet opgenomen. Apparaatinstellingen kunnen gevoelige gegevens bevatten; behandel dit bestand als vertrouwelijk.'),
       flows,
-      inventory: {folders: plain(result.folders), devices, zones, variables, apps},
+      inventory: {folders: plain(result.folders), devices, zones, variables, betterLogicVariables, apps},
       stats: {
         standardFlows: flows.filter(f => f.type === 'standard').length,
         advancedFlows: flows.filter(f => f.type === 'advanced').length,
         devices: Object.keys(devices).length,
         zones: Object.keys(zones).length,
         variables: Object.keys(variables).length,
+        betterLogicVariables: betterLogicVariables.length,
         apps: Object.keys(apps).length
       },
       warnings
@@ -413,7 +458,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
   }
 
   validateRestoreBackup(data) {
-    if (!data || data.format !== 'homey-backup-center' || ![2,3,4].includes(data.version)) throw new Error(tr('Geen ondersteunde Homey Backupcentrum-back-up.'));
+    if (!data || data.format !== 'homey-backup-center' || ![2,3,4,5].includes(data.version)) throw new Error(tr('Geen ondersteunde Homey Backupcentrum-back-up.'));
     Backup.validate(data.flows);
     if (!data.inventory || typeof data.inventory !== 'object') throw new Error(tr('Inventaris ontbreekt.'));
     return data;
@@ -459,6 +504,74 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
       const cur=varsByName.get(v.name);
       const action=!cur?'create':(cur.type!==v.type || !sameValue(cur.value,v.value))?'update':'none';
       return {backupId:v.id,name:v.name,type:v.type,value:v.value,currentValue:cur?.value,currentType:cur?.type,action,volatile:isVolatileLogic(v.name),defaultSelected:false};
+    });
+
+    // Better Logic Library is optional and is restored as a separate category.
+    // Compare only name/type/value/persistence; BLL's lastChanged metadata is intentionally ignored.
+    const backupBetterLogicByName=new Map();
+    for(const v of values(inv.betterLogicVariables)){
+      if(
+        v
+        && typeof v.name==='string'
+        && ['boolean','number','string'].includes(v.type)
+        && !isSecretVariable(v.name)
+      ) backupBetterLogicByName.set(v.name,v);
+    }
+
+    let betterLogicAvailable=true;
+    let betterLogicError=null;
+    let currentBetterLogic=[];
+    if(backupBetterLogicByName.size){
+      try{
+        currentBetterLogic=await this.getBetterLogicVariables();
+      }catch(e){
+        betterLogicAvailable=false;
+        betterLogicError=String(e?.message||e);
+      }
+    }
+
+    const currentBetterLogicByName=new Map(
+      currentBetterLogic.map(v=>[v.name,v])
+    );
+
+    const betterLogicOps=[...backupBetterLogicByName.values()].map(v=>{
+      if(!betterLogicAvailable){
+        return {
+          name:v.name,type:v.type,value:v.value,persistent:v.persistent===true,
+          action:'unsupported',reason:'better-logic-unavailable',defaultSelected:false
+        };
+      }
+
+      const cur=currentBetterLogicByName.get(v.name);
+
+      if(!cur){
+        if(v.persistent===true){
+          return {
+            name:v.name,type:v.type,value:v.value,persistent:true,
+            action:'create',currentValue:undefined,currentType:undefined,
+            defaultSelected:false
+          };
+        }
+        return {
+          name:v.name,type:v.type,value:v.value,persistent:false,
+          action:'unsupported',reason:'missing-transient',defaultSelected:false
+        };
+      }
+
+      if(cur.type!==v.type){
+        return {
+          name:v.name,type:v.type,value:v.value,persistent:v.persistent===true,
+          currentValue:cur.value,currentType:cur.type,
+          action:'unsupported',reason:'type-mismatch',defaultSelected:false
+        };
+      }
+
+      return {
+        name:v.name,type:v.type,value:v.value,persistent:v.persistent===true,
+        currentValue:cur.value,currentType:cur.type,
+        action:sameValue(cur.value,v.value)?'none':'update',
+        defaultSelected:false
+      };
     });
 
     const deviceOps=[];
@@ -550,6 +663,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
       apps:missingApps.length,
       zones:zoneOps.filter(x=>x.action!=='none').length,
       variables:variableOps.filter(x=>x.action!=='none').length,
+      betterLogicVariables:betterLogicOps.filter(x=>['create','update'].includes(x.action)).length,
       devices:deviceOps.filter(x=>x.action==='update').length,
       standardFlows:stdOps.filter(x=>x.action!=='none').length,
       advancedFlows:advOps.filter(x=>x.action!=='none').length
@@ -562,6 +676,14 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
       apps:{total:values(inv.apps).length,ready:values(inv.apps).length-missingApps.length,install:missingApps,changes:changes.apps},
       zones:{total:zoneOps.length,ready:zoneOps.filter(z=>z.action!=='create').length,operations:zoneOps,create:zoneOps.filter(z=>z.action==='create'),changes:changes.zones},
       variables:{total:variableOps.length,ready:variableOps.length,operations:variableOps,changes:changes.variables,volatile:variableOps.filter(v=>v.action!=='none'&&v.volatile).map(v=>v.name)},
+      betterLogicVariables:{
+        total:betterLogicOps.length,
+        ready:betterLogicOps.filter(v=>v.action!=='unsupported').length,
+        operations:betterLogicOps,
+        changes:changes.betterLogicVariables,
+        available:betterLogicAvailable,
+        error:betterLogicError
+      },
       devices:{total:deviceOps.length,ready:deviceOps.filter(d=>d.found).length,operations:deviceOps,changes:changes.devices},
       standardFlows:{total:std.length,ready:stdOps.filter(f=>f.action!=='create').length,operations:stdOps,changes:changes.standardFlows},
       advancedFlows:{total:adv.length,ready:advOps.filter(f=>f.action!=='create').length,operations:advOps,changes:changes.advancedFlows},
@@ -576,7 +698,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
     if(plan.blockers.length) throw new Error(tr('Restore geblokkeerd: ')+plan.blockers.join(' | '));
     if(plan.noChangesNeeded) return {ok:true,noChangesNeeded:true,totalChanges:0,message:tr('0 wijzigingen nodig — Homey komt overeen met deze back-up.'),warnings:[...plan.warnings]};
     const writer=this.getWriteClient();
-    const report={ok:true,apps:{ok:0,failed:[]},zones:{ok:0,failed:[],skipped:[],verified:[]},variables:{ok:0,failed:[],skipped:[]},devices:{ok:0,failed:[],skipped:[]},standardFlows:{ok:0,failed:[],skipped:[]},advancedFlows:{ok:0,failed:[],skipped:[]},warnings:[...plan.warnings]};
+    const report={ok:true,apps:{ok:0,failed:[]},zones:{ok:0,failed:[],skipped:[],verified:[]},variables:{ok:0,failed:[],skipped:[]},betterLogicVariables:{ok:0,failed:[],skipped:[],verified:[]},devices:{ok:0,failed:[],skipped:[]},standardFlows:{ok:0,failed:[],skipped:[]},advancedFlows:{ok:0,failed:[],skipped:[]},warnings:[...plan.warnings]};
     const fail=(bucket,item,e)=>{bucket.failed.push({item,error:String(e?.message||e)});report.ok=false;};
 
     // 1. Apps first, so flow cards/drivers have the best chance of existing before flows return.
@@ -651,6 +773,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
     // 3. Logic by name. Flow references to newly-created variable IDs cannot safely be rewritten generically.
     let vars=await this.client.logic.getVariables(); const varsByName=new Map(Object.values(vars).map(v=>[v.name,v]));
     const selectedLogic = Array.isArray(selection.logic) ? new Set(selection.logic) : null;
+    const selectedBetterLogic = Array.isArray(selection.betterLogicVariables) ? new Set(selection.betterLogicVariables) : new Set();
     const selectedStandardFlows = Array.isArray(selection.standardFlows) ? new Set(selection.standardFlows) : new Set();
     const selectedAdvancedFlows = Array.isArray(selection.advancedFlows) ? new Set(selection.advancedFlows) : new Set();
     const selectedDevices = Array.isArray(selection.devices) ? new Set(selection.devices) : new Set();
@@ -662,7 +785,123 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
       try{const cur=varsByName.get(op.name); if(cur){if(cur.type!==op.type) throw new Error(tr('Bestaande variabele heeft type ')+cur.type+tr(' i.p.v. ')+op.type);await writer.logic.updateVariable({id:cur.id,variable:{name:op.name,value:op.value}});}else{const created=await writer.logic.createVariable({variable:{name:op.name,type:op.type,value:op.value}});varsByName.set(op.name,created);}report.variables.ok++;}catch(e){fail(report.variables,op.name||op.backupId,e);}
     }
 
-    // 4. Existing devices only. Never auto-pair radio devices. Write only actual plan differences.
+    // 4. Better Logic Library variables. Only explicitly selected safe operations are written.
+    // Existing variables use BLL's public PUT API. Missing variables are recreated only
+    // when the backup proves they were persistent; the current settings array is re-read
+    // immediately before each merge so unrelated BLL variables are never removed.
+    const bllAppId='net.i-dev.betterlogic';
+    const bllOps=plan.betterLogicVariables?.operations||[];
+    for(const op of bllOps.filter(v=>v.action!=='none')){
+      if(!selectedBetterLogic.has(op.name)){
+        report.betterLogicVariables.skipped.push({
+          name:op.name,
+          reason:op.action==='unsupported' ? (op.reason||'unsupported') : tr('niet geselecteerd')
+        });
+        continue;
+      }
+
+      if(op.action==='unsupported'){
+        report.betterLogicVariables.skipped.push({
+          name:op.name,
+          reason:op.reason||'unsupported'
+        });
+        continue;
+      }
+
+      try{
+        if(!['boolean','number','string'].includes(op.type)){
+          throw new Error(tr('Niet-ondersteund Better Logic Library type: ')+op.type);
+        }
+
+        // Re-read canonical BLL state immediately before every operation.
+        const liveApp=await this.client.apps.getApp({id:bllAppId});
+        const liveAll=await liveApp.get({path:'/ALL'});
+        if(!Array.isArray(liveAll)) throw new Error(tr('Better Logic Library gaf geen geldige variabelenlijst terug.'));
+        const live=liveAll.find(v=>v?.name===op.name);
+
+        if(live){
+          if(live.type!==op.type){
+            throw new Error(
+              tr('Bestaande Better Logic Library variabele heeft type ')
+              +live.type+tr(' i.p.v. ')+op.type
+            );
+          }
+
+          const encodedName=encodeURIComponent(op.name);
+          const encodedValue=encodeURIComponent(String(op.value));
+          await liveApp.put({path:'/'+encodedName+'/'+encodedValue});
+        }else{
+          if(op.action!=='create' || op.persistent!==true){
+            throw new Error(tr('Ontbrekende tijdelijke Better Logic Library variabele wordt niet automatisch aangemaakt.'));
+          }
+
+          // PAT-backed settings write. Always merge into a fresh array.
+          const stored=await writer.apps.getAppSetting({
+            id:bllAppId,
+            name:'variables'
+          });
+          if(!Array.isArray(stored)){
+            throw new Error(tr('Better Logic Library permanente variabelen konden niet veilig worden gelezen.'));
+          }
+
+          const existing=stored.find(v=>v?.name===op.name);
+          if(existing){
+            // State changed between /ALL and settings read. Never overwrite blindly.
+            if(existing.type!==op.type){
+              throw new Error(
+                tr('Better Logic Library variabele veranderde tijdens restore; typeconflict gedetecteerd.')
+              );
+            }
+            throw new Error(
+              tr('Better Logic Library variabele veranderde tijdens restore; probeer het restore-plan opnieuw.')
+            );
+          }
+
+          const merged=[
+            ...stored,
+            {name:op.name,type:op.type,value:op.value}
+          ];
+
+          await writer.apps.setAppSetting({
+            id:bllAppId,
+            name:'variables',
+            value:merged
+          });
+        }
+
+        // A fulfilled write is not enough: verify canonical /ALL state.
+        await new Promise(resolve=>setTimeout(resolve,250));
+        const verifyApp=await this.client.apps.getApp({id:bllAppId});
+        const verifyAll=await verifyApp.get({path:'/ALL'});
+        if(!Array.isArray(verifyAll)){
+          throw new Error(tr('Better Logic Library verificatie gaf geen geldige variabelenlijst terug.'));
+        }
+
+        const actual=verifyAll.find(v=>v?.name===op.name);
+        if(!actual){
+          throw new Error(tr('Better Logic Library write kon niet worden geverifieerd: variabele ontbreekt.'));
+        }
+        if(actual.type!==op.type || !sameValue(actual.value,op.value)){
+          throw new Error(
+            tr('Better Logic Library write niet toegepast/gecontroleerd: actueel ')
+            +JSON.stringify(actual.value)
+            +tr('; verwacht ')
+            +JSON.stringify(op.value)
+          );
+        }
+
+        report.betterLogicVariables.ok++;
+        report.betterLogicVariables.verified.push({
+          name:op.name,
+          type:actual.type,
+          value:actual.value
+        });
+      }catch(e){
+        fail(report.betterLogicVariables,op.name,e);
+      }
+    }
+
+    // 5. Existing devices only. Never auto-pair radio devices. Write only actual plan differences.
     const currentDevices=await this.client.devices.getDevices();
     const backupDevicesById=new Map(Object.values(data.inventory.devices||{}).map(d=>[d.id,d]));
     for(const op of plan.devices.operations){
@@ -704,7 +943,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
       }catch(e){fail(report.devices,d.name||d.id,e);}
     }
 
-    // 5. Flows last. Write only flows that differ from the plan; never rewrite matching flows. Existing IDs are updated; missing flows are recreated (Homey assigns a new ID).
+    // 6. Flows last. Write only flows that differ from the plan; never rewrite matching flows. Existing IDs are updated; missing flows are recreated (Homey assigns a new ID).
     const stdNow=await this.client.flow.getFlows(), advNow=await this.client.flow.getAdvancedFlows();
     const cleanFlow=f=>{const x=JSON.parse(JSON.stringify(f));delete x.id;delete x.type;delete x.folderName;delete x.folderPath;if(x.folder&&zoneMap[x.folder])x.folder=zoneMap[x.folder];return x;};
     const backupFlowsById=new Map(data.flows.map(f=>[f.id,f]));
@@ -717,7 +956,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
       try{const body=cleanFlow(f);if(advNow[f.id])await writer.flow.updateAdvancedFlow({id:f.id,advancedflow:body});else await writer.flow.createAdvancedFlow({advancedflow:body});report.advancedFlows.ok++;}catch(e){fail(report.advancedFlows,f.name||f.id,e);}
     }
 
-    // 6. Fresh verification counts. 'broken' is included where Homey exposes it.
+    // 7. Fresh verification counts. 'broken' is included where Homey exposes it.
     const [stdVerify,advVerify]=await Promise.all([this.client.flow.getFlows(),this.client.flow.getAdvancedFlows()]);
     report.verification={standard:{total:Object.keys(stdVerify).length,broken:Object.values(stdVerify).filter(f=>f.broken===true).map(f=>f.name)},advanced:{total:Object.keys(advVerify).length,broken:Object.values(advVerify).filter(f=>f.broken===true).map(f=>f.name)}};
     if(report.verification.standard.broken.length||report.verification.advanced.broken.length)report.ok=false;

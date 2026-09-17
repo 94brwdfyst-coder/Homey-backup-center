@@ -34,7 +34,7 @@ function show(data,label){
   if($('logicSelection')) $('logicSelection').replaceChildren();
   if($('restoreDetails')) $('restoreDetails').open=false;
 }
-function renderStats(s){ const el=$('stats'); el.hidden=false; const entries=[[tr('Standaardflows'),s.standardFlows],[tr('Advanced flows'),s.advancedFlows],[tr('Apparaten'),s.devices],['Apps',s.apps],['Zones',s.zones],['Logic',s.variables]]; el.replaceChildren(...entries.map(([n,v])=>{const d=document.createElement('div');d.className='stat';d.innerHTML='<b>'+String(v??'—')+'</b>'+n;return d;})); }
+function renderStats(s){ const el=$('stats'); el.hidden=false; const entries=[[tr('Standaardflows'),s.standardFlows],[tr('Advanced flows'),s.advancedFlows],[tr('Apparaten'),s.devices],['Apps',s.apps],['Zones',s.zones],['Logic',s.variables]]; if(s.betterLogicVariables!==undefined) entries.push(['BLL',s.betterLogicVariables]); el.replaceChildren(...entries.map(([n,v])=>{const d=document.createElement('div');d.className='stat';d.innerHTML='<b>'+String(v??'—')+'</b>'+n;return d;})); }
 function render(){ $('list').replaceChildren();if(!snapshot)return;const term=$('search').value.toLocaleLowerCase();const flows=snapshot.flows.filter(f=>(f.name+' '+(f.folderName||'Root')).toLocaleLowerCase().includes(term));if(!flows.length){$('list').textContent=tr('Geen flows gevonden.');return;}for(const f of flows){const row=document.createElement('div');row.className='flow';const text=document.createElement('div');text.textContent=f.name;const sub=document.createElement('small');sub.textContent=(f.type==='advanced'?'Advanced':tr('Standaard'))+' · '+(f.folderName||'Root');text.appendChild(sub);const button=document.createElement('button');button.className='secondary';button.textContent=tr('Flowbestand bewaren');button.onclick=()=>downloadBlob(new Blob([JSON.stringify(f,null,2)],{type:'application/json'}),FlowBackup.filename(f));row.append(text,button);$('list').appendChild(row);}}
 
 function newTarget(){return {id:'webdav-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),name:tr('Mijn WebDAV'),url:'',username:'',password:'',hasPassword:false};}
@@ -213,7 +213,7 @@ function summarizeRestorePlan(plan){
 function compactRestoreCounts(plan){
   const parts=[];
   const add=(label,x)=>{if(x && x.changes) parts.push(label+': '+x.changes);};
-  add('Apps',plan.apps); add('Zones',plan.zones); add('Logic',plan.variables); add(tr('Apparaten'),plan.devices); add(tr('Standaardflows'),plan.standardFlows); add(tr('Advanced flows'),plan.advancedFlows);
+  add('Apps',plan.apps); add('Zones',plan.zones); add('Logic',plan.variables); add('BLL',plan.betterLogicVariables); add(tr('Apparaten'),plan.devices); add(tr('Standaardflows'),plan.standardFlows); add(tr('Advanced flows'),plan.advancedFlows);
   return parts.length ? tr('Gevonden verschillen — ')+parts.join(' · ') : tr('Geen verschillen gevonden.');
 }
 function clearRestoreSelection(){const box=$('logicSelection'); if(box) box.replaceChildren();}
@@ -229,6 +229,44 @@ function renderLogicSelection(plan){
     label.appendChild(cb); label.appendChild(document.createTextNode(' '+v.name+(v.volatile?tr(' — dynamisch, overslaan'):' — '+displayValue(v.currentValue)+' → '+displayValue(v.value)))); box.appendChild(label);
   }
 }
+function renderBetterLogicSelection(plan){
+  const box=$('logicSelection'); if(!box)return;
+  const ops=(plan.betterLogicVariables?.operations||[]).filter(v=>v.action!=='none');
+  if(!ops.length)return;
+
+  const title=document.createElement('p');
+  title.innerHTML='<b>'+tr('Better Logic Library-variabelen selecteren voor restore')+'</b>';
+  box.appendChild(title);
+
+  for(const v of ops){
+    const label=document.createElement('label');
+    label.style.display='block';
+    label.style.margin='8px 0';
+
+    const cb=document.createElement('input');
+    cb.type='checkbox';
+    cb.className='betterLogicRestoreSelect';
+    cb.dataset.name=v.name;
+    cb.checked=false;
+
+    const supported=v.action==='create' || v.action==='update';
+    cb.disabled=!supported;
+
+    let detail='';
+    if(v.action==='create'){
+      detail=tr(' — ontbreekt → aanmaken');
+    }else if(v.action==='update'){
+      detail=' — '+displayValue(v.currentValue)+' → '+displayValue(v.value);
+    }else{
+      detail=tr(' — niet herstelbaar: ')+tr(v.reason||'unsupported');
+    }
+
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(' '+v.name+detail));
+    box.appendChild(label);
+  }
+}
+
 function renderZoneSelection(plan){
   const box=$('logicSelection'); if(!box)return;
   const ops=(plan.zones?.operations||[]).filter(z=>z.action!=='none');
@@ -279,6 +317,7 @@ function renderFlowSelection(plan){
   }
 }
 function selectedLogicNames(){return [...document.querySelectorAll('.logicRestoreSelect:checked')].map(x=>x.dataset.name);}
+function selectedBetterLogicNames(){return [...document.querySelectorAll('.betterLogicRestoreSelect:checked')].map(x=>x.dataset.name);}
 function selectedFlowIds(className){return [...document.querySelectorAll('.'+className+':checked')].map(x=>x.dataset.id);}
 
 async function requestRestorePlan(){
@@ -292,7 +331,7 @@ async function requestRestorePlan(){
     clearRestoreSelection();
     if($('restoreResult')) {$('restoreResult').textContent=''; $('restoreResult').className='restore-result';}
     if($('restoreCounts')) $('restoreCounts').textContent=compactRestoreCounts(plan);
-    renderLogicSelection(plan); renderZoneSelection(plan); renderDeviceSelection(plan); renderFlowSelection(plan);
+    renderLogicSelection(plan); renderBetterLogicSelection(plan); renderZoneSelection(plan); renderDeviceSelection(plan); renderFlowSelection(plan);
     pre.textContent=summarizeRestorePlan(plan);
     if($('restoreDetails')) $('restoreDetails').open=false;
     status.textContent=plan.blockers?.length?tr('Herstelplan bevat blokkades; restore is geblokkeerd.'):plan.noChangesNeeded?tr('✓ Alles komt overeen met deze back-up.'):tr('Kies hieronder alleen wat je wilt herstellen.');
@@ -325,13 +364,14 @@ async function runRestore(){
     // verificatie kan andere, niet-geselecteerde verschillen bevatten; die mogen
     // een geslaagde restore niet als mislukt laten lijken.
     const selectedLogic=selectedLogicNames();
+    const selectedBetterLogic=selectedBetterLogicNames();
     const selectedZones=selectedZoneIds();
     const selectedDevices=selectedDeviceIds();
     const selectedStandardFlows=selectedFlowIds('standardFlowRestoreSelect');
     const selectedAdvancedFlows=selectedFlowIds('advancedFlowRestoreSelect');
-    const selectedTotal=selectedLogic.length+selectedZones.length+selectedDevices.length+selectedStandardFlows.length+selectedAdvancedFlows.length;
-    if(!selectedTotal){status.textContent=tr('Selecteer eerst minimaal één zone, Logic-waarde, apparaat of flow om te herstellen.');button.disabled=false;return;}
-    const selectionTransfer=await BackupTransfer.upload({zones:selectedZones,logic:selectedLogic,devices:selectedDevices,standardFlows:selectedStandardFlows,advancedFlows:selectedAdvancedFlows},null,'selection');
+    const selectedTotal=selectedLogic.length+selectedBetterLogic.length+selectedZones.length+selectedDevices.length+selectedStandardFlows.length+selectedAdvancedFlows.length;
+    if(!selectedTotal){status.textContent=tr('Selecteer eerst minimaal één zone, Logic-waarde, Better Logic Library-variabele, apparaat of flow om te herstellen.');button.disabled=false;return;}
+    const selectionTransfer=await BackupTransfer.upload({zones:selectedZones,logic:selectedLogic,betterLogicVariables:selectedBetterLogic,devices:selectedDevices,standardFlows:selectedStandardFlows,advancedFlows:selectedAdvancedFlows},null,'selection');
     let result;
     try{result=await BackupTransfer.job('/restore/staged-run',{id:await ensureStagedBackup(),confirm:true,selectionId:selectionTransfer.id});}
     finally{await BackupTransfer.release(selectionTransfer.id);}
@@ -344,14 +384,16 @@ async function runRestore(){
     const remainingZones=new Set((verify.zones?.operations||[]).filter(z=>z.action!=='none').map(z=>z.id));
     const remainingDevices=new Set((verify.devices?.operations||[]).filter(d=>d.action==='update').map(d=>d.id));
     const remainingLogic=new Map((verify.variables?.operations||[]).filter(v=>v.action!=='none').map(v=>[v.name,v]));
+    const remainingBetterLogic=new Map((verify.betterLogicVariables?.operations||[]).filter(v=>v.action!=='none').map(v=>[v.name,v]));
     const remainingStd=new Set((verify.standardFlows?.operations||[]).filter(v=>v.action!=='none').map(v=>v.id));
     const remainingAdv=new Set((verify.advancedFlows?.operations||[]).filter(v=>v.action!=='none').map(v=>v.id));
     const failedZones=selectedZones.filter(id=>remainingZones.has(id));
     const failedDevices=selectedDevices.filter(id=>remainingDevices.has(id));
     const failedLogic=selectedLogic.filter(name=>remainingLogic.has(name));
+    const failedBetterLogic=selectedBetterLogic.filter(name=>remainingBetterLogic.has(name));
     const failedStd=selectedStandardFlows.filter(id=>remainingStd.has(id));
     const failedAdv=selectedAdvancedFlows.filter(id=>remainingAdv.has(id));
-    const failedCount=failedZones.length+failedDevices.length+failedLogic.length+failedStd.length+failedAdv.length;
+    const failedCount=failedZones.length+failedDevices.length+failedLogic.length+failedBetterLogic.length+failedStd.length+failedAdv.length;
     const verifiedCount=selectedTotal-failedCount;
     const otherChanges=Math.max(0,(verify.totalChanges||0)-failedCount);
 
@@ -362,6 +404,7 @@ async function runRestore(){
       for(const id of failedZones){const z=(verify.zones?.operations||[]).find(x=>x.id===id);verification+='\n  Zone: '+(z?.name||id)+' ('+(z?.changes||[]).map(tr).join(', ')+')';}
       for(const id of failedDevices){const d=(verify.devices?.operations||[]).find(x=>x.id===id);verification+=tr('\n  Apparaat: ')+(d?.name||id)+' ('+(d?.changes||[]).map(tr).join(', ')+')';}
       for(const name of failedLogic){const v=remainingLogic.get(name);verification+='\n  Logic '+name+tr(': huidig ')+displayValue(v?.currentValue)+tr(' · verwacht ')+displayValue(v?.value);}
+      for(const name of failedBetterLogic){const v=remainingBetterLogic.get(name);verification+='\n  Better Logic Library '+name+tr(': huidig ')+displayValue(v?.currentValue)+tr(' · verwacht ')+displayValue(v?.value);}
       for(const id of failedStd){const f=(verify.standardFlows?.operations||[]).find(x=>x.id===id);verification+=tr('\n  Standaardflow: ')+(f?.name||id);}
       for(const id of failedAdv){const f=(verify.advancedFlows?.operations||[]).find(x=>x.id===id);verification+='\n  Advanced flow: '+(f?.name||id);}
     }

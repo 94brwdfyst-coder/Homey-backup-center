@@ -1,3 +1,12 @@
+## 0.4.5
+- Add Better Logic Library variables to configuration backups.
+- Add safe selective restore for existing Better Logic Library boolean, number and string variables.
+- Allow missing persistent Better Logic Library variables to be recreated selectively while preserving unrelated variables.
+- Keep unsupported transient variables and type conflicts visible but non-selectable during restore.
+- Verify Better Logic Library changes after restore and show them as a separate restore category.
+- Introduce backup format 5 while keeping restore compatibility with backup formats 2, 3 and 4.
+- Add regression coverage for Better Logic Library backup, restore, UI selection and backup-format compatibility.
+
 ## 0.4.4
 - Make the selective restore workflow clearer in English and Dutch.
 - Clarify that creating a restore plan does not change anything on Homey.

@@ -3,3 +3,4 @@ test/
 TESTING.md
 docs/
 eslint.config.js
+.homeybuild/

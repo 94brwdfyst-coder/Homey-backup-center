@@ -266,3 +266,83 @@ test('new exports use backup format 5 while restore keeps formats 2 through 5 co
    );
  }
 });
+
+test('backup target dispatcher keeps WebDAV compatible and routes network destinations to network backup',async()=>{
+ const f=await fixture();
+
+ f.state.networkTargets=[{
+   id:'network-test',
+   name:'Test SFTP',
+   type:'sftp',
+   host:'192.0.2.1',
+   port:22,
+   directory:'/backups',
+   username:'test',
+   password:'test',
+   fingerprint:'SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+   timeoutMs:30000
+ }];
+
+ const calls=[];
+ f.app.uploadWebdav=async id=>{
+   calls.push(['webdav',id]);
+   return {ok:true,filename:'webdav.json',bytes:10,target:'Test NAS',warnings:[]};
+ };
+
+ f.app.network.backup=async id=>{
+   calls.push(['network',id]);
+   return {ok:true,filename:'network.json',bytes:20,destination:'Test SFTP'};
+ };
+
+ const webdav=await f.app.runBackupTarget('koofr');
+ assert.equal(webdav.target,'Test NAS');
+
+ const network=await f.app.runBackupTarget('network-test');
+ assert.equal(network.target,'Test SFTP');
+ assert.equal(Array.isArray(network.warnings),true);assert.equal(network.warnings.length,0);
+
+ assert.deepEqual(calls,[
+   ['webdav','koofr'],
+   ['network','network-test']
+ ]);
+
+ await assert.rejects(f.app.runBackupTarget('missing'),/destination not found/i);
+});
+
+test('schedule accepts network destination and active network destination cannot be removed',async()=>{
+ const f=await fixture();
+
+ f.state.networkTargets=[{
+   id:'network-test',
+   name:'Test FTP',
+   type:'ftp',
+   host:'192.0.2.1',
+   port:21,
+   directory:'/',
+   username:'test',
+   password:'test',
+   fingerprint:'',
+   share:'',
+   domain:'',
+   timeoutMs:30000
+ }];
+
+ const config={
+   enabled:true,
+   time:'03:00',
+   weekdays:['2'],
+   targetId:'network-test'
+ };
+
+ const saved=f.app.saveSchedule(config);
+ assert.equal(saved.targetId,'network-test');
+
+ assert.throws(
+   ()=>f.app.removeNetworkTarget('network-test'),
+   /Disable or change the schedule/i
+ );
+
+ f.app.saveSchedule({...config,enabled:false});
+ const remaining=f.app.removeNetworkTarget('network-test');
+ assert.deepEqual(Array.from(remaining),[]);
+});

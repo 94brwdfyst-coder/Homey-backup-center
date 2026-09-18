@@ -23,13 +23,6 @@ const BackupDownload = (()=>{
         await navigator.share({files:[file],title:t('Backup Center')});
         status.textContent=t('File handed to the share sheet. Check the destination you selected.');return;
       }
-      if(!shareOnly && typeof window.showSaveFilePicker==='function'){
-        const handle=await window.showSaveFilePicker({suggestedName:name});
-        const stream=await handle.createWritable();
-        try {await stream.write(blob);await stream.close();}
-        catch(e){await stream.abort().catch(()=>{});throw e;}
-        status.textContent=t('File saved.');return;
-      }
       fallback();
     }catch(e){
       if(e.name==='AbortError'){status.textContent=t('Saving or sharing was cancelled.');return;}

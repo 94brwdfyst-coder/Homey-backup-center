@@ -1,6 +1,12 @@
 'use strict';
 let snapshot = null;
 let webdavTargets = [];
+let networkTargets = [];
+window.onNetworkTargetsChanged = targets => {
+  networkTargets = Array.isArray(targets) ? targets : [];
+  const selected = $('schedTarget')?.value || '';
+  renderScheduleTargetSelect(selected);
+};
 const $ = id => document.getElementById(id);
 const tr = BackupI18n.t;
 let stagedBackup=null;
@@ -64,9 +70,14 @@ function selectedWeekdays(){return [...$('schedWeekdays').querySelectorAll('inpu
 function renderScheduleTargetSelect(selectedId){
   const sel=$('schedTarget'); if(!sel)return;
   sel.replaceChildren();
-  if(!webdavTargets.length){const o=document.createElement('option');o.value='';o.textContent=tr('Geen WebDAV-locatie — voeg er eerst één toe');sel.appendChild(o);return;}
-  for(const t of webdavTargets){const o=document.createElement('option');o.value=t.id;o.textContent=t.name||t.url;sel.appendChild(o);}
-  sel.value=selectedId;
+  const choices=[
+    ...webdavTargets.map(t=>({id:t.id,label:(t.name||t.url)+' (WebDAV)'})),
+    ...networkTargets.map(t=>({id:t.id,label:(t.name||t.host)+' ('+(t.type==='smb'?'SMB2':String(t.type||'').toUpperCase())+')'}))
+  ];
+  if(!choices.length){const o=document.createElement('option');o.value='';o.textContent=tr('Geen back-upbestemming — voeg er eerst één toe');sel.appendChild(o);return;}
+  for(const t of choices){const o=document.createElement('option');o.value=t.id;o.textContent=t.label;sel.appendChild(o);}
+  if(selectedId && choices.some(t=>t.id===selectedId))sel.value=selectedId;
+  else sel.value='';
 }
 function renderSchedule(s){
   $('schedEnabled').checked=!!s.enabled;$('schedTime').value=s.time;
@@ -115,7 +126,7 @@ async function saveSchedule(showMessage=true){
 }
 async function runScheduleNow(){
   const targetId=$('schedTarget').value;
-  if(!targetId){ $('scheduleStatus').textContent=tr('Kies eerst een WebDAV-locatie.'); $('scheduleStatus').className='hint error'; return; }
+  if(!targetId){ $('scheduleStatus').textContent=tr('Kies eerst een back-upbestemming.'); $('scheduleStatus').className='hint error'; return; }
   const btn=$('runScheduleNow'); const st=$('scheduleStatus');
   try{
     btn.disabled=true; st.textContent=tr('Back-up wordt nu gemaakt en geüpload…'); st.className='hint';
@@ -436,7 +447,19 @@ async function onHomeyReady(HomeyInstance){
   setInterval(()=>{if(!operationBusy)api('GET','/schedule',null).then(showScheduleStatus).catch(()=>{});},15000);
   api('GET','/app-info',null).then(info=>{ const v=String(info?.version||'—'); if($('appVersion')) $('appVersion').textContent=v; if($('restoreVersion')) $('restoreVersion').textContent=v; }).catch(()=>{ if($('appVersion')) $('appVersion').textContent='—'; if($('restoreVersion')) $('restoreVersion').textContent='—'; });
   $('fetch').onclick=async()=>{try{setOperationBusy(true);$('fetch').disabled=true;$('status').textContent=tr('Homey-back-up wordt opgebouwd…');const data=await BackupTransfer.job('/export/prepare',{});show(data,tr('Opgehaald uit deze Homey: ')+new Date(data.createdAt).toLocaleString(BackupI18n.getLanguage()));const w=(data.warnings||[]);$('status').textContent=tr('Back-up klaar.')+(w.length?tr(' Waarschuwingen: ')+w.join(' | '):'');}catch(error){snapshot=null;window.__restorePlan=null;window.__restoreArmed=false;$('planRestore').disabled=true;$('runRestore').disabled=true;BackupTransfer.release(stagedBackup?.id);stagedBackup=null;$('save').disabled=true;$('share').disabled=true;$('status').textContent=tr('Ophalen mislukt: ')+tr(error.message||String(error));}finally{setOperationBusy(false);$('fetch').disabled=false;}};
-  api('GET','/webdav',null).then(x=>{webdavTargets=x.map(t=>({...t,password:''}));renderTargets();loadSchedule();}).catch(e=>{$('webdavStatus').textContent=tr('WebDAV-instellingen laden mislukt: ')+tr(e.message||String(e));loadSchedule();});
+  try{
+    const [webdav,network]=await Promise.all([
+      api('GET','/webdav',null),
+      api('GET','/network',null)
+    ]);
+    webdavTargets=webdav.map(t=>({...t,password:''}));
+    networkTargets=network;
+    renderTargets();
+    await loadSchedule();
+  }catch(e){
+    $('webdavStatus').textContent=tr('Back-upbestemmingen laden mislukt: ')+tr(e.message||String(e));
+    await loadSchedule();
+  }
   if($('saveSchedule')) $('saveSchedule').onclick=()=>saveSchedule().catch(e=>{ $('scheduleStatus').textContent=tr('Iets misgegaan: ')+tr(e.message||String(e)); });
   if($('runScheduleNow')) $('runScheduleNow').onclick=runScheduleNow;
   loadRestoreAuth();

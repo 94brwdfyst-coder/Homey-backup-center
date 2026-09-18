@@ -2,7 +2,7 @@
 module.exports = {
   async getNetwork({homey}) {return homey.app.network.list();},
   async saveNetwork({homey,body}) {return homey.app.network.save(body.target);},
-  async removeNetwork({homey,body}) {return homey.app.network.remove(body.id);},
+  async removeNetwork({homey,body}) {return homey.app.removeNetworkTarget(body.id);},
   async testNetwork({homey,body}) {return homey.app.jobs.start(()=>homey.app.network.test(body.id));},
   async backupNetwork({homey,body}) {return homey.app.jobs.start(()=>homey.app.network.backup(body.id));},
   async getAppInfo({ homey }) { return homey.app.getAppInfo(); },

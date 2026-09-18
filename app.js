@@ -178,8 +178,8 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
     await this.initWriteClient();
     this.scheduler = new Scheduler({
       read:()=>this.homey.settings.get('schedule'), write:s=>this.homey.settings.set('schedule',s),
-      upload:id=>this.uploadWebdav(id), notify:s=>this.notifyScheduleFailure(s),
-      timeline:()=>this.homey.notifications.createNotification({excerpt:tr('Automatic backup failed after three attempts. Check the WebDAV location in Backup Center.')})
+      upload:id=>this.runBackupTarget(id), notify:s=>this.notifyScheduleFailure(s),
+      timeline:()=>this.homey.notifications.createNotification({excerpt:tr('Automatic backup failed after three attempts. Check the backup destination in Backup Center.')})
     });
     const previous=this.scheduler.state();
     if(previous.lastStatus==='running') {
@@ -215,6 +215,24 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
     this.homey.settings.set('language',language); I18n.setLanguage(language);
     return this.getAppInfo();
   }
+  removeNetworkTarget(id){
+    const schedule=this.getSchedule();
+    if(schedule.enabled && schedule.targetId===id)throw Error(tr('Disable or change the schedule before removing its backup destination.'));
+    return this.network.remove(id);
+  }
+  getBackupTarget(id){
+    const webdav=(this.homey.settings.get('webdavTargets')||[]).find(t=>t.id===id);
+    if(webdav)return {kind:'webdav',target:webdav};
+    const network=this.network.list().find(t=>t.id===id);
+    if(network)return {kind:'network',target:network};
+    throw Error(tr('Backup destination not found.'));
+  }
+  async runBackupTarget(id){
+    const resolved=this.getBackupTarget(id);
+    if(resolved.kind==='webdav')return this.uploadWebdav(id);
+    const result=await this.network.backup(id);
+    return {...result,target:result.target||result.destination,warnings:result.warnings||[]};
+  }
   getSchedule(){return this.scheduler.state();}
   saveSchedule(config){
     if(this.scheduler.busy)throw Error(tr('A backup is already running. Try again when it has finished.'));
@@ -224,7 +242,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
     const weekdays=[...new Set(config.weekdays.map(String))];
     if(config.enabled && !weekdays.length)throw Error(tr('Choose at least one weekday.'));
     const targetId=String(config.targetId||'');
-    if(config.enabled || targetId)this.getTarget(targetId);
+    if(config.enabled || targetId)this.getBackupTarget(targetId);
     const current=this.getSchedule();
     const changed=current.targetId!==targetId || current.time!==config.time || JSON.stringify(current.weekdays.slice().sort())!==JSON.stringify(weekdays.slice().sort());
     const next={...current,enabled:!!config.enabled,time:config.time,weekdays,targetId,notifyUserId:String(config.notifyUserId||'')};
@@ -247,7 +265,7 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
     let id='homey:manager:mobile:push_text_critical';
     try {await client.flow.getFlowCardAction({id});}
     catch(_) {id='homey:manager:mobile:push_text';await client.flow.getFlowCardAction({id});}
-    await client.flow.runFlowCardAction({id,args:{user:{id:user.id,name:user.name},text:tr('Automatic backup failed after three attempts. Check the WebDAV location in Backup Center.')}});
+    await client.flow.runFlowCardAction({id,args:{user:{id:user.id,name:user.name},text:tr('Automatic backup failed after three attempts. Check the backup destination in Backup Center.')}});
   }
   startBackupTransfer(bytes,kind='backup'){if(!['backup','selection'].includes(kind))throw Error('Invalid backup chunk.');return this.transfers.create(bytes,kind);}
   appendBackupTransfer(body){return this.transfers.append(body.id,body.offset,body.data);}

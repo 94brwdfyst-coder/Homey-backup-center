@@ -34,7 +34,7 @@ const NetworkUi=(()=>{
   el('net-password').placeholder=t.hasPassword?label('Saved; leave empty to keep','Opgeslagen; leeg laten om te behouden'):'';
   el('net-select').value=selected;protocol();
  }
- function render(){const select=el('net-select');select.replaceChildren(new Option(label('New destination','Nieuwe bestemming'),''));for(const t of targets)select.add(new Option(t.name+' ('+t.type.toUpperCase()+')',t.id));select.value=selected;}
+ function render(){const select=el('net-select');select.replaceChildren(new Option(label('New destination','Nieuwe bestemming'),''));for(const t of targets)select.add(new Option(t.name+' ('+t.type.toUpperCase()+')',t.id));select.value=selected;if(typeof window.onNetworkTargetsChanged==='function')window.onNetworkTargetsChanged(targets);}
  async function save(){const target={};for(const key of fields)target[key]=el('net-'+key).value;if(selected)target.id=selected;targets=await api('POST','/network',{target});const current=selected?targets.find(t=>t.id===selected):targets[targets.length-1];selected=current.id;rememberSelection();render();edit(current);}
  async function poll(path){const handle=await api('POST',path,{id:selected});let done=false;
   try{for(;;){const job=await api('POST','/job',{id:handle.jobId});if(job.status==='error'){done=true;throw Error(job.error);}if(job.status==='done'){done=true;return job.result;}await new Promise(resolve=>setTimeout(resolve,700));}}

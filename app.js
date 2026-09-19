@@ -196,13 +196,25 @@ module.exports = class HomeyBackupCenterApp extends Homey.App {
     this.transfers?.clear();
   }
   registerNetworkFlows(){
-    const autocomplete=async query=>this.network.list().filter(t=>t.name.toLowerCase().includes(String(query).toLowerCase())).map(t=>({id:t.id,name:t.name,description:t.type.toUpperCase()}));
+    const autocomplete=async query=>{
+      const webdav=(this.homey.settings.get('webdavTargets')||[])
+        .map(t=>({id:t.id,name:t.name||t.url,description:'WEBDAV'}));
+      const network=this.network.list()
+        .map(t=>({id:t.id,name:t.name,description:t.type.toUpperCase()}));
+      return [...webdav,...network]
+        .filter(t=>t.name.toLowerCase().includes(String(query).toLowerCase()));
+    };
     const action=this.homey.flow.getActionCard('network_backup');
     action.registerArgumentAutocompleteListener('destination',autocomplete);
-    action.registerRunListener(async args=>{await this.network.backup(args.destination?.id);return true;});
+    action.registerRunListener(async args=>{await this.runBackupTarget(args.destination?.id);return true;});
     const condition=this.homey.flow.getConditionCard('network_destination_reachable');
     condition.registerArgumentAutocompleteListener('destination',autocomplete);
-    condition.registerRunListener(async args=>{try{await this.network.test(args.destination?.id);return true;}catch(_){return false;}});
+    condition.registerRunListener(async args=>{try{
+    const resolved=this.getBackupTarget(args.destination?.id);
+    if(resolved.kind==='webdav') await this.testWebdav(args.destination?.id);
+    else await this.network.test(args.destination?.id);
+    return true;
+  }catch(_){return false;}});
     for(const id of ['network_backup_completed','network_backup_failed']){
       const card=this.homey.flow.getTriggerCard(id);
       card.registerArgumentAutocompleteListener('destination',autocomplete);
